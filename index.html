@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TXT Loader</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #07080a;
+    --bg2: #0c0e12;
+    --card: rgba(18, 21, 28, 0.72);
+    --card-solid: #12151c;
+    --border: rgba(255,255,255,0.07);
+    --border-hover: rgba(255,255,255,0.14);
+    --text: #eef0f4;
+    --muted: #7a8190;
+    --dim: #4a5160;
+    --accent: #6ea8ff;
+    --accent2: #8b7cff;
+    --green: #3dd68c;
+    --red: #ff6b6b;
+    --orange: #ffb347;
+    --glow: 0 0 40px rgba(110, 168, 255, 0.12);
+    --radius: 16px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.5;
+    overflow-x: hidden;
+  }
+  /* ambient */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 50% at 20% -10%, rgba(110,168,255,0.09), transparent 50%),
+      radial-gradient(ellipse 60% 40% at 90% 10%, rgba(139,124,255,0.07), transparent 45%),
+      radial-gradient(ellipse 50% 30% at 50% 100%, rgba(61,214,140,0.04), transparent 40%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .wrap {
+    position: relative;
+    z-index: 1;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 2.5rem 1.25rem 4rem;
+  }
+
+  /* header */
+  header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  .brand h1 {
+    font-size: 1.65rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    background: linear-gradient(135deg, #fff 30%, var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .brand p { color: var(--muted); font-size: 0.88rem; margin-top: 0.2rem; }
+  .live-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: rgba(61,214,140,0.1);
+    border: 1px solid rgba(61,214,140,0.25);
+    color: var(--green);
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 0.3rem 0.65rem;
+    border-radius: 999px;
+    letter-spacing: 0.02em;
+  }
+  .live-pill::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--green);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--green);
+    animation: pulse 1.6s ease infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.35; }
+  }
+
+  /* cards */
+  .card {
+    background: var(--card);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.35rem 1.4rem;
+    margin-bottom: 1rem;
+    transition: border-color 0.2s;
+  }
+  .card:hover { border-color: var(--border-hover); }
+  .card-title {
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .card-title .num {
+    background: rgba(110,168,255,0.15);
+    color: var(--accent);
+    width: 20px; height: 20px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+  }
+
+  /* key bar */
+  .key-row {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+  .key-input {
+    flex: 1;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    letter-spacing: 0.04em;
+  }
+
+  /* form */
+  label {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-bottom: 0.35rem;
+    font-weight: 500;
+  }
+  input[type="text"], input[type="number"], textarea, .file-zone {
+    width: 100%;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.65rem 0.85rem;
+    color: var(--text);
+    font-size: 0.9rem;
+    font-family: inherit;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  input:focus, textarea:focus {
+    outline: none;
+    border-color: rgba(110,168,255,0.5);
+    box-shadow: 0 0 0 3px rgba(110,168,255,0.12);
+  }
+  textarea {
+    min-height: 100px;
+    resize: vertical;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    line-height: 1.55;
+  }
+  .field { margin-bottom: 0.9rem; }
+
+  /* file drop */
+  .file-zone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: 1.5rem 1rem;
+    cursor: pointer;
+    border-style: dashed;
+    border-width: 1.5px;
+    text-align: center;
+    transition: all 0.2s;
+  }
+  .file-zone:hover, .file-zone.drag {
+    border-color: var(--accent);
+    background: rgba(110,168,255,0.05);
+  }
+  .file-zone svg { opacity: 0.5; }
+  .file-zone span { font-size: 0.85rem; color: var(--muted); }
+  .file-zone strong { color: var(--accent); font-weight: 600; }
+  .file-zone input { display: none; }
+  .file-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--green);
+    margin-top: 0.35rem;
+  }
+
+  /* buttons */
+  button, .btn {
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 0.88rem;
+    border: none;
+    border-radius: 10px;
+    padding: 0.65rem 1.1rem;
+    cursor: pointer;
+    transition: transform 0.12s, filter 0.12s, background 0.15s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+  }
+  button:active { transform: scale(0.97); }
+  button:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #0a0c10;
+    box-shadow: var(--glow);
+  }
+  .btn-primary:hover:not(:disabled) { filter: brightness(1.1); }
+  .btn-ghost {
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover:not(:disabled) { border-color: var(--border-hover); color: var(--text); }
+  .btn-danger {
+    background: rgba(255,107,107,0.12);
+    color: var(--red);
+    border: 1px solid rgba(255,107,107,0.25);
+  }
+  .btn-danger:hover:not(:disabled) { background: rgba(255,107,107,0.2); }
+  .btn-full { width: 100%; }
+  .btn-row { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .btn-row > * { flex: 1; min-width: 0; }
+
+  /* stats strip */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.65rem;
+    margin-bottom: 1rem;
+  }
+  .stat {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 0.9rem 1rem;
+    text-align: center;
+  }
+  .stat-val {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .stat-label {
+    font-size: 0.7rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 0.15rem;
+  }
+
+  /* output */
+  .output-box {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-top: 0.9rem;
+    overflow: hidden;
+    display: none;
+  }
+  .output-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 0.85rem;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.72rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .output-body {
+    padding: 0.85rem 1rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    line-height: 1.6;
+    max-height: 280px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+
+  /* status toast */
+  .status {
+    font-size: 0.84rem;
+    margin-top: 0.7rem;
+    min-height: 1.2em;
+  }
+  .ok { color: var(--green); }
+  .err { color: var(--red); }
+  .warn { color: var(--orange); }
+
+  /* remaining preview */
+  .queue-preview {
+    margin-top: 0.9rem;
+    max-height: 180px;
+    overflow-y: auto;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--bg2);
+    display: none;
+  }
+  .queue-item {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    padding: 0.4rem 0.75rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--muted);
+    display: flex;
+    gap: 0.6rem;
+  }
+  .queue-item:last-child { border-bottom: none; }
+  .queue-item .idx { color: var(--dim); min-width: 1.5rem; }
+
+  /* toast */
+  #toast {
+    position: fixed;
+    bottom: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(120%);
+    background: var(--card-solid);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 0.7rem 1.2rem;
+    border-radius: 12px;
+    font-size: 0.88rem;
+    font-weight: 500;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.45);
+    z-index: 100;
+    transition: transform 0.3s cubic-bezier(0.22,1,0.36,1);
+    pointer-events: none;
+  }
+  #toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* amount stepper */
+  .stepper {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    width: fit-content;
+  }
+  .stepper button {
+    background: transparent;
+    color: var(--muted);
+    border: none;
+    border-radius: 0;
+    width: 40px;
+    height: 40px;
+    font-size: 1.1rem;
+    padding: 0;
+  }
+  .stepper button:hover { color: var(--text); background: rgba(255,255,255,0.04); }
+  .stepper input {
+    width: 64px;
+    text-align: center;
+    border: none;
+    border-left: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    border-radius: 0;
+    background: transparent;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.95rem;
+    margin: 0;
+    padding: 0.5rem 0;
+  }
+  .stepper input:focus { box-shadow: none; border-color: var(--border); }
+
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 1rem 0;
+  }
+
+  @media (max-width: 560px) {
+    .stats { grid-template-columns: 1fr; }
+    .btn-row { flex-direction: column; }
+    header { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <h1>TXT Loader</h1>
+      <p>mongo queue · fetch removes · auto api key</p>
+    </div>
+    <div class="live-pill" id="connPill">checking</div>
+  </header>
+
+  <!-- stats -->
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-val" id="statCount">—</div>
+      <div class="stat-label">in queue</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val" id="statFetched">0</div>
+      <div class="stat-label">fetched session</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val" id="statAdded">0</div>
+      <div class="stat-label">added session</div>
+    </div>
+  </div>
+
+  <!-- KEY -->
+  <div class="card">
+    <div class="card-title"><span class="num">1</span> API Key</div>
+    <div class="key-row">
+      <input class="key-input" type="text" id="apikey" readonly>
+      <button class="btn-ghost" onclick="copyKey()">copy</button>
+      <button class="btn-ghost" onclick="regenKey()">regen</button>
+    </div>
+    <p class="status" style="color:var(--muted);font-size:0.75rem;margin-top:0.5rem;">auto-generated · stored in this browser · sent on every request</p>
+  </div>
+
+  <!-- UPLOAD -->
+  <div class="card">
+    <div class="card-title"><span class="num">2</span> Upload / Add lines</div>
+
+    <div class="file-zone" id="dropZone" onclick="document.getElementById('file').click()">
+      <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M7 18a4.6 4.4 0 0 1 0-9 5 4.6 0 0 1 11 2h1a3.5 3.5 0 0 1 0 7h-1"/><path d="M12 13v9m0 0 3-3m-3 3-3-3"/></svg>
+      <span>drop <strong>.txt</strong> here or click to browse</span>
+      <div class="file-name" id="fileName"></div>
+      <input type="file" id="file" accept=".txt">
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="field">
+      <label>or paste more lines</label>
+      <textarea id="paste" placeholder="one line per row&#10;another line&#10;…"></textarea>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-primary btn-full" id="uploadBtn" onclick="uploadFile()">Upload file</button>
+      <button class="btn-ghost btn-full" onclick="addLines()">Add pasted</button>
+    </div>
+    <div class="status" id="uploadStatus"></div>
+  </div>
+
+  <!-- FETCH -->
+  <div class="card">
+    <div class="card-title"><span class="num">3</span> Fetch lines</div>
+
+    <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;margin-bottom:1rem;">
+      <div>
+        <label style="margin-bottom:0.4rem;">amount</label>
+        <div class="stepper">
+          <button type="button" onclick="step(-1)">−</button>
+          <input type="number" id="amount" value="5" min="1">
+          <button type="button" onclick="step(1)">+</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-primary" id="fetchBtn" onclick="fetchLines()">Fetch & remove</button>
+      <button class="btn-ghost" onclick="peek()">Peek</button>
+      <button class="btn-danger" onclick="clearAll()">Clear all</button>
+    </div>
+
+    <div class="status" id="fetchStatus"></div>
+
+    <div class="output-box" id="outputBox">
+      <div class="output-head">
+        <span id="outputLabel">result</span>
+        <button class="btn-ghost" style="padding:0.25rem 0.55rem;font-size:0.72rem;" onclick="copyOutput()">copy</button>
+      </div>
+      <div class="output-body" id="output"></div>
+    </div>
+
+    <div class="queue-preview" id="queuePreview"></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const BASE = window.location.origin;
+let sessionFetched = 0;
+let sessionAdded = 0;
+let lastOutput = '';
+
+/* ── key ── */
+function genKey() {
+  const a = new Uint8Array(18);
+  crypto.getRandomValues(a);
+  return Array.from(a, b => b.toString(16).padStart(2,'0')).join('');
+}
+function getKey() {
+  let k = localStorage.getItem('txtloader_key');
+  if (!k) { k = genKey(); localStorage.setItem('txtloader_key', k); }
+  return k;
+}
+function setKey(k) {
+  localStorage.setItem('txtloader_key', k);
+  document.getElementById('apikey').value = k;
+}
+function regenKey() {
+  if (!confirm('Generate new key? Old key data stays in mongo but this browser loses access.')) return;
+  setKey(genKey());
+  toast('new key generated');
+  refreshCount();
+}
+function copyKey() {
+  navigator.clipboard.writeText(getKey()).then(() => toast('key copied'));
+}
+
+/* ── helpers ── */
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 2200);
+}
+function step(d) {
+  const el = document.getElementById('amount');
+  el.value = Math.max(1, (parseInt(el.value) || 1) + d);
+}
+async function api(path, opts = {}) {
+  const headers = { 'X-API-Key': getKey(), ...(opts.headers || {}) };
+  if (opts.json) {
+    headers['Content-Type'] = 'application/json';
+    opts.body = JSON.stringify(opts.json);
+    delete opts.json;
+  }
+  const res = await fetch(BASE + path, { ...opts, headers });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || res.statusText);
+  return data;
+}
+function showOutput(lines, label) {
+  lastOutput = lines.join('\n');
+  const box = document.getElementById('outputBox');
+  document.getElementById('output').textContent = lastOutput || '(empty)';
+  document.getElementById('outputLabel').textContent = label || 'result';
+  box.style.display = 'block';
+}
+function copyOutput() {
+  navigator.clipboard.writeText(lastOutput).then(() => toast('output copied'));
+}
+
+/* ── stats ── */
+async function refreshCount() {
+  try {
+    const d = await api('/api/count');
+    document.getElementById('statCount').textContent = d.count;
+    document.getElementById('connPill').textContent = 'mongo live';
+    document.getElementById('connPill').style.color = '';
+    // light preview of next few
+    if (d.count > 0) {
+      const peek = await api('/api/peek?amount=8');
+      const prev = document.getElementById('queuePreview');
+      prev.style.display = 'block';
+      prev.innerHTML = peek.lines.map((l,i) =>
+        `<div class="queue-item"><span class="idx">${i}</span><span>${escapeHtml(l)}</span></div>`
+      ).join('') + (d.count > 8 ? `<div class="queue-item"><span class="idx">…</span><span>+${d.count-8} more</span></div>` : '');
+    } else {
+      document.getElementById('queuePreview').style.display = 'none';
+    }
+  } catch (e) {
+    document.getElementById('statCount').textContent = '—';
+    document.getElementById('connPill').textContent = 'offline';
+    document.getElementById('connPill').style.color = 'var(--red)';
+  }
+}
+function escapeHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+/* ── upload ── */
+const drop = document.getElementById('dropZone');
+const fileInput = document.getElementById('file');
+['dragenter','dragover'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('drag'); }));
+['dragleave','drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('drag'); }));
+drop.addEventListener('drop', e => {
+  if (e.dataTransfer.files.length) {
+    fileInput.files = e.dataTransfer.files;
+    document.getElementById('fileName').textContent = e.dataTransfer.files[0].name;
+  }
+});
+fileInput.addEventListener('change', () => {
+  document.getElementById('fileName').textContent = fileInput.files[0]?.name || '';
+});
+
+async function uploadFile() {
+  const status = document.getElementById('uploadStatus');
+  if (!fileInput.files.length) { status.innerHTML = '<span class="err">pick a .txt first</span>'; return; }
+  const fd = new FormData();
+  fd.append('file', fileInput.files[0]);
+  status.textContent = 'uploading…';
+  try {
+    const res = await fetch(BASE + '/api/upload', { method:'POST', headers:{'X-API-Key':getKey()}, body:fd });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'fail');
+    sessionAdded += data.added;
+    document.getElementById('statAdded').textContent = sessionAdded;
+    status.innerHTML = `<span class="ok">+${data.added} lines · total ${data.total}</span>`;
+    toast(`+${data.added} lines`);
+    fileInput.value = '';
+    document.getElementById('fileName').textContent = '';
+    refreshCount();
+  } catch (e) { status.innerHTML = `<span class="err">${e.message}</span>`; }
+}
+
+async function addLines() {
+  const status = document.getElementById('uploadStatus');
+  const lines = document.getElementById('paste').value.split(/\r?\n/).map(l=>l.trim()).filter(Boolean);
+  if (!lines.length) { status.innerHTML = '<span class="err">paste some lines</span>'; return; }
+  status.textContent = 'adding…';
+  try {
+    const data = await api('/api/add', { method:'POST', json:{ lines } });
+    sessionAdded += data.added;
+    document.getElementById('statAdded').textContent = sessionAdded;
+    status.innerHTML = `<span class="ok">+${data.added} lines · total ${data.total}</span>`;
+    toast(`+${data.added} lines`);
+    document.getElementById('paste').value = '';
+    refreshCount();
+  } catch (e) { status.innerHTML = `<span class="err">${e.message}</span>`; }
+}
+
+/* ── fetch ── */
+async function fetchLines() {
+  const amount = Math.max(1, parseInt(document.getElementById('amount').value) || 1);
+  const status = document.getElementById('fetchStatus');
+  status.textContent = 'fetching…';
+  try {
+    const data = await api('/api/fetch', { method:'POST', json:{ amount } });
+    sessionFetched += data.lines.length;
+    document.getElementById('statFetched').textContent = sessionFetched;
+    status.innerHTML = `<span class="ok">got ${data.lines.length} · remaining ${data.remaining}</span>`;
+    showOutput(data.lines, `fetched ${data.lines.length}`);
+    toast(`fetched ${data.lines.length}`);
+    refreshCount();
+  } catch (e) { status.innerHTML = `<span class="err">${e.message}</span>`; }
+}
+
+async function peek() {
+  const amount = Math.max(1, parseInt(document.getElementById('amount').value) || 1);
+  const status = document.getElementById('fetchStatus');
+  try {
+    const data = await api('/api/peek?amount=' + amount);
+    status.innerHTML = `<span class="ok">peek ${data.lines.length} (not removed)</span>`;
+    showOutput(data.lines, `peek ${data.lines.length}`);
+  } catch (e) { status.innerHTML = `<span class="err">${e.message}</span>`; }
+}
+
+async function clearAll() {
+  if (!confirm('Delete ALL lines for this key from mongo?')) return;
+  try {
+    const data = await api('/api/clear', { method:'POST' });
+    document.getElementById('fetchStatus').innerHTML = `<span class="warn">cleared ${data.deleted}</span>`;
+    document.getElementById('outputBox').style.display = 'none';
+    toast(`cleared ${data.deleted}`);
+    refreshCount();
+  } catch (e) {
+    document.getElementById('fetchStatus').innerHTML = `<span class="err">${e.message}</span>`;
+  }
+}
+
+/* boot */
+document.getElementById('apikey').value = getKey();
+refreshCount();
+setInterval(refreshCount, 8000);
+</script>
+</body>
+</html>

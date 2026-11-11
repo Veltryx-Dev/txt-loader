@@ -33,7 +33,7 @@ from pymongo import MongoClient
 # ============================================================
 BASE_DIR = Path(__file__).resolve().parent
 
-MONGO_URI = os.environ.get("MONGO_URI", "mongodb://127.0.0.1:27017")
+MONGO_URI = os.environ.get("MONGO_URI", "mongodb+srv://tabisulajoshleepagud_db_user:SFVCKdbf36goxyU0@cluster0.g9snriw.mongodb.net")
 DB_NAME   = os.environ.get("MONGO_DB", "txtloader")
 PORT      = int(os.environ.get("PORT", os.environ.get("FLASK_PORT", "5000")))
 

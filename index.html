@@ -26,7 +26,7 @@
       radial-gradient(ellipse 60% 40% at 90% 10%, rgba(139,124,255,0.07), transparent 45%);
     pointer-events: none; z-index: 0;
   }
-  .wrap { position: relative; z-index: 1; max-width: 860px; margin: 0 auto; padding: 2.5rem 1.25rem 4rem; }
+  .wrap { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding: 2.5rem 1.25rem 4rem; }
   header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; margin-bottom: 2rem; }
   .brand h1 {
     font-size: 1.65rem; font-weight: 700; letter-spacing: -0.03em;
@@ -147,16 +147,16 @@
   <header>
     <div class="brand">
       <h1>TXT Loader</h1>
-      <p>mongo-backed queue · accounts · auto-login</p>
+      <p>shared pool · accounts · auto-login</p>
     </div>
     <div class="live-pill" id="connPill">checking</div>
   </header>
 
   <div class="stats">
     <div class="stat"><div class="stat-val" id="statUsers">—</div><div class="stat-label">total users</div></div>
-    <div class="stat"><div class="stat-val" id="statGlobal">—</div><div class="stat-label">lines on server</div></div>
-    <div class="stat"><div class="stat-val" id="statCount">—</div><div class="stat-label">in my queue</div></div>
-    <div class="stat"><div class="stat-val" id="statFetched">0</div><div class="stat-label">fetched session</div></div>
+    <div class="stat"><div class="stat-val" id="statGlobal">—</div><div class="stat-label">lines in pool</div></div>
+    <div class="stat"><div class="stat-val" id="statFetchedServer">0</div><div class="stat-label">my fetched on server</div></div>
+    <div class="stat"><div class="stat-val" id="statFetched">0</div><div class="stat-label">fetched this session</div></div>
   </div>
 
   <div class="card" id="authCard">
@@ -190,7 +190,7 @@
   </div>
 
   <div class="card" id="queueCard" style="display:none;">
-    <div class="card-title"><span class="num">2</span> Upload / Add lines</div>
+    <div class="card-title"><span class="num">2</span> Add to shared pool</div>
     <div class="file-zone" id="dropZone" onclick="document.getElementById('file').click()">
       <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M7 18a4.6 4.4 0 0 1 0-9 5 4.6 0 0 1 11 2h1a3.5 3.5 0 0 1 0 7h-1"/><path d="M12 13v9m0 0 3-3m-3 3-3-3"/></svg>
       <span>drop <strong>.txt</strong> here or click to browse</span>
@@ -203,14 +203,14 @@
       <textarea id="paste" placeholder="one line per row&#10;another line&#10;…"></textarea>
     </div>
     <div class="btn-row">
-      <button class="btn-primary btn-full" onclick="uploadFile()">Upload file</button>
+      <button class="btn-primary btn-full" onclick="uploadFile()">Upload to pool</button>
       <button class="btn-ghost btn-full" onclick="addLines()">Add pasted</button>
     </div>
     <div class="status" id="uploadStatus"></div>
   </div>
 
   <div class="card" id="fetchCard" style="display:none;">
-    <div class="card-title"><span class="num">3</span> Fetch lines</div>
+    <div class="card-title"><span class="num">3</span> Fetch from shared pool</div>
     <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;margin-bottom:1rem;">
       <div>
         <label style="margin-bottom:0.4rem;">amount</label>
@@ -222,9 +222,8 @@
       </div>
     </div>
     <div class="btn-row">
-      <button class="btn-primary" onclick="fetchLines()">Fetch &amp; remove</button>
-      <button class="btn-ghost" onclick="peek()">Peek</button>
-      <button class="btn-danger" onclick="clearAll()">Clear all</button>
+      <button class="btn-primary" onclick="fetchLines()">Fetch &amp; remove from pool</button>
+      <button class="btn-ghost" onclick="peek()">Peek pool</button>
     </div>
     <div class="status" id="fetchStatus"></div>
     <div class="output-box" id="outputBox">
@@ -235,6 +234,22 @@
       <div class="output-body" id="output"></div>
     </div>
     <div class="queue-preview" id="queuePreview"></div>
+  </div>
+
+  <div class="card" id="historyCard" style="display:none;">
+    <div class="card-title"><span class="num">4</span> My fetch history (server)</div>
+    <div class="btn-row" style="margin-bottom:1rem;">
+      <button class="btn-ghost" onclick="loadFetched()">Refresh</button>
+      <button class="btn-ghost" onclick="exportFetched()">Download all</button>
+      <button class="btn-danger" onclick="clearFetched()">Clear history</button>
+    </div>
+    <div class="status" id="fetchedStatus"></div>
+    <div class="output-box" id="fetchedBox" style="display:block; margin-top:0.9rem;">
+      <div class="output-head">
+        <span id="fetchedLabel">fetched lines on server</span>
+      </div>
+      <div class="output-body" id="fetchedBody">—</div>
+    </div>
   </div>
 </div>
 
@@ -272,8 +287,10 @@ function renderAuth() {
   document.getElementById('authLoggedIn').style.display  = loggedIn ? 'block' : 'none';
   document.getElementById('queueCard').style.display     = loggedIn ? 'block' : 'none';
   document.getElementById('fetchCard').style.display     = loggedIn ? 'block' : 'none';
+  document.getElementById('historyCard').style.display   = loggedIn ? 'block' : 'none';
   if (loggedIn) {
     document.getElementById('authWho').value = getUsername();
+    loadFetched();
   }
 }
 
@@ -390,16 +407,16 @@ async function refreshStats() {
     if (!data.ok) throw new Error();
     document.getElementById('statUsers').textContent = data.total_users;
     document.getElementById('statGlobal').textContent = data.total_lines;
-    document.getElementById('statCount').textContent = (data.my_count ?? '—');
-    if (data.my_count > 0) {
+    document.getElementById('statFetchedServer').textContent = (data.my_fetched ?? 0);
+    if (data.total_lines > 0 && getToken()) {
       const peek = await api('/api/peek?amount=8').catch(() => ({lines: []}));
       const prev = document.getElementById('queuePreview');
       if (peek.lines.length) {
         prev.style.display = 'block';
         prev.innerHTML = peek.lines.map((l, i) =>
           `<div class="queue-item"><span class="idx">${i}</span><span>${escapeHtml(l)}</span></div>`
-        ).join('') + (data.my_count > 8
-          ? `<div class="queue-item"><span class="idx">…</span><span>+${data.my_count - 8} more</span></div>`
+        ).join('') + (data.total_lines > 8
+          ? `<div class="queue-item"><span class="idx">…</span><span>+${data.total_lines - 8} more</span></div>`
           : '');
       } else {
         prev.style.display = 'none';
@@ -440,8 +457,8 @@ async function uploadFile() {
     });
     const data = await r.json();
     if (!r.ok) throw new Error(data.error || 'fail');
-    status.innerHTML = `<span class="ok">+${data.added} lines · total ${data.total}</span>`;
-    toast(`+${data.added} lines`);
+    status.innerHTML = `<span class="ok">+${data.added} lines · pool now ${data.total}</span>`;
+    toast(`+${data.added} lines to pool`);
     fileInput.value = '';
     document.getElementById('fileName').textContent = '';
     refreshStats();
@@ -459,8 +476,8 @@ async function addLines() {
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({lines})
     });
-    status.innerHTML = `<span class="ok">+${data.added} lines · total ${data.total}</span>`;
-    toast(`+${data.added} lines`);
+    status.innerHTML = `<span class="ok">+${data.added} lines · pool now ${data.total}</span>`;
+    toast(`+${data.added} lines to pool`);
     document.getElementById('paste').value = '';
     refreshStats();
   } catch (e) { status.innerHTML = `<span class="err">${e.message}</span>`; }
@@ -478,10 +495,11 @@ async function fetchLines() {
     });
     sessionFetched += data.lines.length;
     document.getElementById('statFetched').textContent = sessionFetched;
-    status.innerHTML = `<span class="ok">got ${data.lines.length} · remaining ${data.remaining}</span>`;
+    status.innerHTML = `<span class="ok">got ${data.lines.length} · pool remaining ${data.remaining}</span>`;
     showOutput(data.lines, `fetched ${data.lines.length}`);
     toast(`fetched ${data.lines.length}`);
     refreshStats();
+    loadFetched();
   } catch (e) { status.innerHTML = `<span class="err">${e.message}</span>`; }
 }
 
@@ -495,16 +513,67 @@ async function peek() {
   } catch (e) { status.innerHTML = `<span class="err">${e.message}</span>`; }
 }
 
-async function clearAll() {
-  if (!confirm('Delete ALL lines for this account from mongo?')) return;
+async function loadFetched() {
+  if (!getToken()) return;
+  const status = document.getElementById('fetchedStatus');
+  const body = document.getElementById('fetchedBody');
+  const label = document.getElementById('fetchedLabel');
+  status.textContent = 'loading…';
   try {
-    const data = await api('/api/clear', {method: 'POST'});
-    document.getElementById('fetchStatus').innerHTML = `<span class="warn">cleared ${data.deleted}</span>`;
-    document.getElementById('outputBox').style.display = 'none';
-    toast(`cleared ${data.deleted}`);
+    const data = await api('/api/fetched?limit=200');
+    label.textContent = `fetched lines on server · total ${data.total}`;
+    if (!data.lines.length) {
+      body.textContent = '(empty)';
+      status.innerHTML = '<span class="ok">0 fetched lines</span>';
+      return;
+    }
+    body.textContent = data.lines.map(
+      (l, i) => `[${i + 1}] ${(l.fetched_at || '').slice(0, 19).replace('T',' ')}\n${l.text}`
+    ).join('\n\n');
+    status.innerHTML = `<span class="ok">showing ${data.lines.length} of ${data.total}</span>`;
+  } catch (e) {
+    status.innerHTML = `<span class="err">${e.message}</span>`;
+    body.textContent = '(could not load)';
+  }
+}
+
+async function exportFetched() {
+  if (!getToken()) return;
+  try {
+    const r = await fetch(BASE + '/api/fetched/export', {
+      headers: {'Authorization': 'Bearer ' + getToken()}
+    });
+    if (!r.ok) throw new Error('export failed: ' + r.status);
+    const blob = await r.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'fetched_lines.txt';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    toast('export downloaded');
+  } catch (e) {
+    toast('export failed');
+    document.getElementById('fetchedStatus').innerHTML =
+      `<span class="err">${e.message}</span>`;
+  }
+}
+
+async function clearFetched() {
+  if (!getToken()) return;
+  if (!confirm('Delete ALL fetched lines archived on server for this account?')) return;
+  try {
+    const data = await api('/api/fetched/clear', {method: 'POST'});
+    document.getElementById('fetchedStatus').innerHTML =
+      `<span class="warn">deleted ${data.deleted} archived lines</span>`;
+    document.getElementById('fetchedBody').textContent = '(empty)';
+    toast(`deleted ${data.deleted}`);
     refreshStats();
   } catch (e) {
-    document.getElementById('fetchStatus').innerHTML = `<span class="err">${e.message}</span>`;
+    document.getElementById('fetchedStatus').innerHTML =
+      `<span class="err">${e.message}</span>`;
   }
 }
 
@@ -514,9 +583,7 @@ async function validateSavedToken() {
   try {
     const r = await fetch(BASE + '/api/me', { headers: {'Authorization': 'Bearer ' + t} });
     if (!r.ok) clearAuth();
-  } catch {
-    // offline — keep token
-  }
+  } catch {}
   renderAuth();
 }
 

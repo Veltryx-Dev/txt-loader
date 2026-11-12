@@ -11,6 +11,7 @@
     --text: #eef0f4; --muted: #7a8190; --dim: #4a5160;
     --accent: #6ea8ff; --accent2: #8b7cff;
     --green: #3dd68c; --red: #ff6b6b; --orange: #ffb347;
+    --gold: #ffd166;
     --glow: 0 0 40px rgba(110,168,255,0.12); --radius: 16px;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -27,19 +28,20 @@
     pointer-events: none; z-index: 0;
   }
   .wrap { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding: 2.5rem 1.25rem 4rem; }
-  header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; margin-bottom: 2rem; }
+  header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; }
   .brand h1 {
     font-size: 1.65rem; font-weight: 700; letter-spacing: -0.03em;
     background: linear-gradient(135deg, #fff 30%, var(--accent));
     -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
   }
   .brand p { color: var(--muted); font-size: 0.88rem; margin-top: 0.2rem; }
-  .live-pill {
+  .pill-row { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; }
+  .live-pill, .credit-pill, .role-pill {
     display: inline-flex; align-items: center; gap: 0.4rem;
-    background: rgba(61,214,140,0.1); border: 1px solid rgba(61,214,140,0.25);
-    color: var(--green); font-size: 0.72rem; font-weight: 600;
+    font-size: 0.72rem; font-weight: 600;
     padding: 0.3rem 0.65rem; border-radius: 999px; letter-spacing: 0.02em;
   }
+  .live-pill { background: rgba(61,214,140,0.1); border: 1px solid rgba(61,214,140,0.25); color: var(--green); }
   .live-pill::before {
     content: ''; width: 6px; height: 6px; background: var(--green);
     border-radius: 50%; box-shadow: 0 0 8px var(--green);
@@ -47,6 +49,9 @@
   }
   .live-pill.offline::before { background: var(--red); box-shadow: 0 0 8px var(--red); }
   .live-pill.offline { background: rgba(255,107,107,0.1); border-color: rgba(255,107,107,0.25); color: var(--red); }
+  .credit-pill { background: rgba(255,209,102,0.1); border: 1px solid rgba(255,209,102,0.3); color: var(--gold); font-family: monospace; font-size: 0.78rem; }
+  .role-pill { background: rgba(139,124,255,0.15); border: 1px solid rgba(139,124,255,0.35); color: var(--accent2); }
+  .role-pill.owner { background: rgba(255,209,102,0.15); border-color: rgba(255,209,102,0.4); color: var(--gold); }
   @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.35;} }
   .card {
     background: var(--card); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
@@ -67,12 +72,12 @@
   .key-row { display: flex; gap: 0.5rem; align-items: center; }
   .key-input { flex: 1; font-family: monospace; font-size: 0.82rem; letter-spacing: 0.04em; }
   label { display: block; font-size: 0.75rem; color: var(--muted); margin-bottom: 0.35rem; font-weight: 500; }
-  input[type="text"], input[type="password"], input[type="number"], textarea, .file-zone {
+  input[type="text"], input[type="password"], input[type="number"], textarea, .file-zone, select {
     width: 100%; background: var(--bg2); border: 1px solid var(--border);
     border-radius: 10px; padding: 0.65rem 0.85rem; color: var(--text);
     font-size: 0.9rem; font-family: inherit; transition: border-color 0.15s, box-shadow 0.15s;
   }
-  input:focus, textarea:focus {
+  input:focus, textarea:focus, select:focus {
     outline: none; border-color: rgba(110,168,255,0.5);
     box-shadow: 0 0 0 3px rgba(110,168,255,0.12);
   }
@@ -103,12 +108,14 @@
   .btn-ghost:hover:not(:disabled) { border-color: var(--border-hover); color: var(--text); }
   .btn-danger { background: rgba(255,107,107,0.12); color: var(--red); border: 1px solid rgba(255,107,107,0.25); }
   .btn-danger:hover:not(:disabled) { background: rgba(255,107,107,0.2); }
+  .btn-gold { background: linear-gradient(135deg, var(--gold), #f6b73c); color: #221200; box-shadow: 0 0 30px rgba(255,209,102,0.2); }
   .btn-full { width: 100%; }
   .btn-row { display: flex; gap: 0.5rem; flex-wrap: wrap; }
   .btn-row > * { flex: 1; min-width: 0; }
   .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.65rem; margin-bottom: 1rem; }
   .stat { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 0.9rem 1rem; text-align: center; }
   .stat-val { font-family: monospace; font-size: 1.35rem; font-weight: 600; color: var(--text); }
+  .stat-val.gold { color: var(--gold); }
   .stat-label { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0.15rem; }
   .output-box { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; margin-top: 0.9rem; overflow: hidden; display: none; }
   .output-head { display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0.85rem; border-bottom: 1px solid var(--border); font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
@@ -119,6 +126,11 @@
   .queue-item { font-family: monospace; font-size: 0.78rem; padding: 0.4rem 0.75rem; border-bottom: 1px solid var(--border); color: var(--muted); display: flex; gap: 0.6rem; }
   .queue-item:last-child { border-bottom: none; }
   .queue-item .idx { color: var(--dim); min-width: 1.5rem; }
+  .lb-row { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--border); font-size: 0.85rem; }
+  .lb-row:last-child { border-bottom: none; }
+  .lb-rank { color: var(--gold); font-weight: 700; font-family: monospace; min-width: 2.2rem; }
+  .lb-name { flex: 1; font-weight: 500; }
+  .lb-fetched { color: var(--muted); font-size: 0.78rem; font-family: monospace; }
   #toast {
     position: fixed; bottom: 1.5rem; left: 50%;
     transform: translateX(-50%) translateY(120%);
@@ -134,6 +146,9 @@
   .stepper input { width: 64px; text-align: center; border: none; border-left: 1px solid var(--border); border-right: 1px solid var(--border); border-radius: 0; background: transparent; font-family: monospace; font-size: 0.95rem; margin: 0; padding: 0.5rem 0; }
   .stepper input:focus { box-shadow: none; border-color: var(--border); }
   .divider { height: 1px; background: var(--border); margin: 1rem 0; }
+  .tab-row { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 1rem; }
+  .tab { padding: 0.4rem 0.9rem; border-radius: 8px; background: transparent; border: 1px solid var(--border); color: var(--muted); font-size: 0.8rem; cursor: pointer; }
+  .tab.active { background: rgba(110,168,255,0.12); border-color: rgba(110,168,255,0.3); color: var(--accent); }
   @media (max-width: 720px) { .stats { grid-template-columns: repeat(2, 1fr); } }
   @media (max-width: 560px) {
     .stats { grid-template-columns: 1fr; }
@@ -147,21 +162,24 @@
   <header>
     <div class="brand">
       <h1>TXT Loader</h1>
-      <p>shared pool · accounts · auto-login</p>
+      <p>shared pool · credits · accounts</p>
     </div>
-    <div class="live-pill" id="connPill">checking</div>
+    <div class="pill-row">
+      <div class="credit-pill" id="creditPill">— credits</div>
+      <div class="role-pill" id="rolePill" style="display:none;">—</div>
+      <div class="live-pill" id="connPill">checking</div>
+    </div>
   </header>
 
   <div class="stats">
-    <div class="stat"><div class="stat-val" id="statUsers">—</div><div class="stat-label">total users</div></div>
+    <div class="stat"><div class="stat-val gold" id="statCredits">—</div><div class="stat-label">my credits</div></div>
     <div class="stat"><div class="stat-val" id="statGlobal">—</div><div class="stat-label">lines in pool</div></div>
-    <div class="stat"><div class="stat-val" id="statFetchedServer">0</div><div class="stat-label">my fetched on server</div></div>
-    <div class="stat"><div class="stat-val" id="statFetched">0</div><div class="stat-label">fetched this session</div></div>
+    <div class="stat"><div class="stat-val" id="statFetchedServer">0</div><div class="stat-label">my fetched (server)</div></div>
+    <div class="stat"><div class="stat-val" id="statSessionFetched">0</div><div class="stat-label">fetched this session</div></div>
   </div>
 
   <div class="card" id="authCard">
     <div class="card-title"><span class="num">1</span> Account</div>
-
     <div id="authLoggedOut">
       <div class="field">
         <label>username</label>
@@ -177,7 +195,6 @@
       </div>
       <div class="status" id="authStatus"></div>
     </div>
-
     <div id="authLoggedIn" style="display:none;">
       <div class="key-row">
         <input class="key-input" type="text" id="authWho" readonly>
@@ -186,6 +203,28 @@
       <p class="status" style="color:var(--muted);font-size:0.75rem;margin-top:0.5rem;">
         logged in · token cached · auto-login on reload
       </p>
+    </div>
+  </div>
+
+  <div class="card" id="creditsCard" style="display:none;">
+    <div class="card-title"><span class="num">¢</span> Credits</div>
+    <div class="tab-row">
+      <button class="tab active" onclick="creditTab('redeem', this)">Redeem voucher</button>
+      <button class="tab" onclick="creditTab('history', this)">History</button>
+    </div>
+    <div id="creditRedeemPane">
+      <div class="field">
+        <label>voucher code</label>
+        <input type="text" id="voucherCode" placeholder="LUN-XXXXXXXXXXXX" style="text-transform:uppercase;">
+      </div>
+      <button class="btn-gold btn-full" onclick="redeemVoucher()">Redeem</button>
+      <div class="status" id="voucherStatus"></div>
+    </div>
+    <div id="creditHistoryPane" style="display:none;">
+      <button class="btn-ghost btn-full" onclick="loadCreditHistory()" style="margin-bottom:0.75rem;">Refresh</button>
+      <div class="output-box" id="creditHistoryBox" style="display:block;">
+        <div class="output-body" id="creditHistoryBody">—</div>
+      </div>
     </div>
   </div>
 
@@ -220,9 +259,13 @@
           <button type="button" onclick="step(1)">+</button>
         </div>
       </div>
+      <div>
+        <label style="margin-bottom:0.4rem;">estimated cost</label>
+        <div class="stat-val gold" id="estCost" style="font-size:1.05rem;">1.00 credits</div>
+      </div>
     </div>
     <div class="btn-row">
-      <button class="btn-primary" onclick="fetchLines()">Fetch &amp; remove from pool</button>
+      <button class="btn-primary" onclick="fetchLines()">Fetch &amp; spend credits</button>
       <button class="btn-ghost" onclick="peek()">Peek pool</button>
     </div>
     <div class="status" id="fetchStatus"></div>
@@ -237,18 +280,65 @@
   </div>
 
   <div class="card" id="historyCard" style="display:none;">
-    <div class="card-title"><span class="num">4</span> My fetch history (server)</div>
+    <div class="card-title"><span class="num">4</span> My fetch history</div>
     <div class="btn-row" style="margin-bottom:1rem;">
       <button class="btn-ghost" onclick="loadFetched()">Refresh</button>
       <button class="btn-ghost" onclick="exportFetched()">Download all</button>
       <button class="btn-danger" onclick="clearFetched()">Clear history</button>
     </div>
     <div class="status" id="fetchedStatus"></div>
-    <div class="output-box" id="fetchedBox" style="display:block; margin-top:0.9rem;">
+    <div class="output-box" style="display:block; margin-top:0.9rem;">
       <div class="output-head">
         <span id="fetchedLabel">fetched lines on server</span>
       </div>
       <div class="output-body" id="fetchedBody">—</div>
+    </div>
+  </div>
+
+  <div class="card" id="leaderboardCard" style="display:none;">
+    <div class="card-title"><span class="num">★</span> Leaderboard</div>
+    <div id="leaderboardBody" style="border:1px solid var(--border); border-radius:10px; overflow:hidden;">
+      <div class="lb-row" style="color:var(--muted);font-size:0.75rem;"><span class="lb-rank">#</span><span class="lb-name">user</span><span class="lb-fetched">fetched</span></div>
+    </div>
+  </div>
+
+  <div class="card" id="ownerCard" style="display:none;">
+    <div class="card-title"><span class="num">⚡</span> Owner panel</div>
+    <div class="tab-row">
+      <button class="tab active" onclick="ownerTab('stats', this)">Stats</button>
+      <button class="tab" onclick="ownerTab('grant', this)">Grant credits</button>
+      <button class="tab" onclick="ownerTab('voucher', this)">Vouchers</button>
+      <button class="tab" onclick="ownerTab('pool', this)">Pool</button>
+    </div>
+
+    <div id="ownerStatsPane">
+      <button class="btn-ghost btn-full" onclick="loadOwnerStats()" style="margin-bottom:0.75rem;">Refresh</button>
+      <div class="output-box" style="display:block;">
+        <div class="output-body" id="ownerStatsBody">—</div>
+      </div>
+    </div>
+
+    <div id="ownerGrantPane" style="display:none;">
+      <div class="field"><label>username</label><input type="text" id="grantUser" placeholder="username"></div>
+      <div class="field"><label>amount</label><input type="number" id="grantAmount" placeholder="10" step="0.01" min="0.01"></div>
+      <button class="btn-gold btn-full" onclick="grantCredits()">Grant</button>
+      <div class="status" id="grantStatus"></div>
+    </div>
+
+    <div id="ownerVoucherPane" style="display:none;">
+      <div class="field"><label>amount per voucher</label><input type="number" id="voucherAmount" value="10" step="0.01" min="0.01"></div>
+      <div class="field"><label>count</label><input type="number" id="voucherCount" value="5" min="1" max="500"></div>
+      <button class="btn-gold btn-full" onclick="createVoucher()">Create</button>
+      <div class="status" id="voucherCreateStatus"></div>
+      <div class="output-box" id="voucherBox">
+        <div class="output-head">codes</div>
+        <div class="output-body" id="voucherBody"></div>
+      </div>
+    </div>
+
+    <div id="ownerPoolPane" style="display:none;">
+      <button class="btn-danger btn-full" onclick="clearPool()">Wipe entire pool</button>
+      <div class="status" id="poolStatus"></div>
     </div>
   </div>
 </div>
@@ -260,38 +350,58 @@ const BASE = window.location.origin;
 const TOKEN_KEY = 'txtloader_token';
 const USER_KEY  = 'txtloader_username';
 const KEY_KEY   = 'txtloader_api_key';
+const ROLE_KEY  = 'txtloader_role';
 
 let sessionFetched = 0;
 let lastOutput = '';
+let CREDITS_PER_LINE = 0.2;
 
 function getToken()    { return localStorage.getItem(TOKEN_KEY) || ''; }
 function getUsername() { return localStorage.getItem(USER_KEY) || ''; }
+function getRole()     { return localStorage.getItem(ROLE_KEY) || 'user'; }
 function getKey()      { return localStorage.getItem(KEY_KEY) || ''; }
 
-function setAuth(token, username, api_key) {
+function setAuth(token, username, api_key, role) {
   localStorage.setItem(TOKEN_KEY, token);
   localStorage.setItem(USER_KEY, username);
   localStorage.setItem(KEY_KEY, api_key);
+  localStorage.setItem(ROLE_KEY, role || 'user');
   renderAuth();
 }
 function clearAuth() {
   localStorage.removeItem(TOKEN_KEY);
   localStorage.removeItem(USER_KEY);
   localStorage.removeItem(KEY_KEY);
+  localStorage.removeItem(ROLE_KEY);
   renderAuth();
 }
 
 function renderAuth() {
   const loggedIn = !!getToken();
+  const role = getRole();
   document.getElementById('authLoggedOut').style.display = loggedIn ? 'none' : 'block';
   document.getElementById('authLoggedIn').style.display  = loggedIn ? 'block' : 'none';
+  document.getElementById('creditsCard').style.display   = loggedIn ? 'block' : 'none';
   document.getElementById('queueCard').style.display     = loggedIn ? 'block' : 'none';
   document.getElementById('fetchCard').style.display     = loggedIn ? 'block' : 'none';
   document.getElementById('historyCard').style.display   = loggedIn ? 'block' : 'none';
+  document.getElementById('leaderboardCard').style.display = loggedIn ? 'block' : 'none';
+  document.getElementById('ownerCard').style.display     = (loggedIn && role === 'owner') ? 'block' : 'none';
+  const rolePill = document.getElementById('rolePill');
   if (loggedIn) {
     document.getElementById('authWho').value = getUsername();
+    rolePill.style.display = 'inline-flex';
+    rolePill.textContent = role.toUpperCase();
+    rolePill.classList.toggle('owner', role === 'owner');
     loadFetched();
+    loadCreditHistory();
+    loadLeaderboard();
+    if (role === 'owner') loadOwnerStats();
+  } else {
+    rolePill.style.display = 'none';
+    document.getElementById('creditPill').textContent = '— credits';
   }
+  updateCost();
 }
 
 async function doLogin() {
@@ -302,13 +412,12 @@ async function doLogin() {
   s.textContent = 'logging in…';
   try {
     const r = await fetch(BASE + '/api/login', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
+      method: 'POST', headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({username: u, password: p})
     });
     const data = await r.json();
     if (!r.ok) throw new Error(data.error || r.statusText);
-    setAuth(data.token, data.username, data.api_key);
+    setAuth(data.token, data.username, data.api_key, data.role);
     document.getElementById('authPass').value = '';
     s.innerHTML = '<span class="ok">logged in</span>';
     refreshStats();
@@ -326,15 +435,14 @@ async function doSignup() {
   s.textContent = 'creating account…';
   try {
     const r = await fetch(BASE + '/api/signup', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
+      method: 'POST', headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({username: u, password: p})
     });
     const data = await r.json();
     if (!r.ok) throw new Error(data.error || r.statusText);
-    setAuth(data.token, data.username, data.api_key);
+    setAuth(data.token, data.username, data.api_key, data.role);
     document.getElementById('authPass').value = '';
-    s.innerHTML = '<span class="ok">account created · logged in</span>';
+    s.innerHTML = `<span class="ok">account created · ${data.credits} credits</span>`;
     refreshStats();
   } catch (e) {
     s.innerHTML = '<span class="err">' + e.message + '</span>';
@@ -355,10 +463,21 @@ function toast(msg) {
   clearTimeout(t._timer);
   t._timer = setTimeout(() => t.classList.remove('show'), 2200);
 }
+
 function step(d) {
   const el = document.getElementById('amount');
   el.value = Math.max(1, (parseInt(el.value) || 1) + d);
+  updateCost();
 }
+document.getElementById('amount').addEventListener('input', updateCost);
+
+function updateCost() {
+  const amount = parseInt(document.getElementById('amount').value) || 0;
+  const isOwner = getRole() === 'owner';
+  const cost = isOwner ? 0 : (amount * CREDITS_PER_LINE);
+  document.getElementById('estCost').textContent = isOwner ? 'free (owner)' : `${cost.toFixed(2)} credits`;
+}
+
 function escapeHtml(s) {
   return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
@@ -379,7 +498,13 @@ async function api(path, opts = {}) {
   const r = await fetch(BASE + path, opts);
   const data = await r.json().catch(() => ({}));
   if (r.status === 401) { clearAuth(); throw new Error('session expired — login'); }
-  if (!r.ok) throw new Error(data.error || r.statusText);
+  if (!r.ok) {
+    const msg = data.error || r.statusText;
+    const err = new Error(msg);
+    err.payload = data;
+    err.status = r.status;
+    throw err;
+  }
   return data;
 }
 
@@ -388,13 +513,10 @@ async function healthCheck() {
   try {
     const r = await fetch(BASE + '/api/health');
     const data = await r.json();
-    if (data.ok) {
-      pill.classList.remove('offline');
-      pill.textContent = 'mongo live';
-    } else throw new Error();
+    if (data.ok) { pill.classList.remove('offline'); pill.textContent = 'mongo live'; }
+    else throw new Error();
   } catch {
-    pill.classList.add('offline');
-    pill.textContent = 'offline';
+    pill.classList.add('offline'); pill.textContent = 'offline';
   }
 }
 
@@ -405,9 +527,16 @@ async function refreshStats() {
     const r = await fetch(BASE + '/api/stats', { headers });
     const data = await r.json();
     if (!data.ok) throw new Error();
-    document.getElementById('statUsers').textContent = data.total_users;
+    if (data.credits_per_line) {
+      const n = parseFloat(data.credits_per_line);
+      if (n > 0) CREDITS_PER_LINE = n;
+    }
     document.getElementById('statGlobal').textContent = data.total_lines;
     document.getElementById('statFetchedServer').textContent = (data.my_fetched ?? 0);
+    const credits = data.credits ?? '—';
+    document.getElementById('statCredits').textContent = credits === 'inf' ? '∞' : credits;
+    document.getElementById('creditPill').textContent = (credits === 'inf' ? '∞' : credits) + ' credits';
+    updateCost();
     if (data.total_lines > 0 && getToken()) {
       const peek = await api('/api/peek?amount=8').catch(() => ({lines: []}));
       const prev = document.getElementById('queuePreview');
@@ -418,17 +547,16 @@ async function refreshStats() {
         ).join('') + (data.total_lines > 8
           ? `<div class="queue-item"><span class="idx">…</span><span>+${data.total_lines - 8} more</span></div>`
           : '');
-      } else {
-        prev.style.display = 'none';
-      }
+      } else prev.style.display = 'none';
     } else {
       document.getElementById('queuePreview').style.display = 'none';
     }
   } catch (e) {
-    document.getElementById('statUsers').textContent = '—';
+    document.getElementById('statGlobal').textContent = '—';
   }
 }
 
+/* upload */
 const drop = document.getElementById('dropZone');
 const fileInput = document.getElementById('file');
 ['dragenter','dragover'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('drag'); }));
@@ -451,14 +579,12 @@ async function uploadFile() {
   status.textContent = 'uploading…';
   try {
     const r = await fetch(BASE + '/api/upload', {
-      method: 'POST',
-      headers: {'Authorization': 'Bearer ' + getToken()},
-      body: fd
+      method: 'POST', headers: {'Authorization': 'Bearer ' + getToken()}, body: fd
     });
     const data = await r.json();
     if (!r.ok) throw new Error(data.error || 'fail');
-    status.innerHTML = `<span class="ok">+${data.added} lines · pool now ${data.total}</span>`;
-    toast(`+${data.added} lines to pool`);
+    status.innerHTML = `<span class="ok">+${data.added} · pool ${data.total}</span>`;
+    toast(`+${data.added} to pool`);
     fileInput.value = '';
     document.getElementById('fileName').textContent = '';
     refreshStats();
@@ -472,12 +598,11 @@ async function addLines() {
   status.textContent = 'adding…';
   try {
     const data = await api('/api/add', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
+      method: 'POST', headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({lines})
     });
-    status.innerHTML = `<span class="ok">+${data.added} lines · pool now ${data.total}</span>`;
-    toast(`+${data.added} lines to pool`);
+    status.innerHTML = `<span class="ok">+${data.added} · pool ${data.total}</span>`;
+    toast(`+${data.added} to pool`);
     document.getElementById('paste').value = '';
     refreshStats();
   } catch (e) { status.innerHTML = `<span class="err">${e.message}</span>`; }
@@ -489,18 +614,25 @@ async function fetchLines() {
   status.textContent = 'fetching…';
   try {
     const data = await api('/api/fetch', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
+      method: 'POST', headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({amount})
     });
     sessionFetched += data.lines.length;
-    document.getElementById('statFetched').textContent = sessionFetched;
-    status.innerHTML = `<span class="ok">got ${data.lines.length} · pool remaining ${data.remaining}</span>`;
+    document.getElementById('statSessionFetched').textContent = sessionFetched;
+    status.innerHTML = `<span class="ok">got ${data.lines.length} · paid ${data.cost} · pool ${data.remaining} · balance ${data.credits === 'inf' ? '∞' : data.credits}</span>`;
     showOutput(data.lines, `fetched ${data.lines.length}`);
     toast(`fetched ${data.lines.length}`);
     refreshStats();
     loadFetched();
-  } catch (e) { status.innerHTML = `<span class="err">${e.message}</span>`; }
+    loadCreditHistory();
+  } catch (e) {
+    if (e.status === 402) {
+      const p = e.payload || {};
+      status.innerHTML = `<span class="err">insufficient credits — need ${p.cost}, have ${p.have}. affordable: ${p.affordable_lines} lines</span>`;
+    } else {
+      status.innerHTML = `<span class="err">${e.message}</span>`;
+    }
+  }
 }
 
 async function peek() {
@@ -508,11 +640,12 @@ async function peek() {
   const status = document.getElementById('fetchStatus');
   try {
     const data = await api('/api/peek?amount=' + amount);
-    status.innerHTML = `<span class="ok">peek ${data.lines.length} (not removed)</span>`;
+    status.innerHTML = `<span class="ok">peek ${data.lines.length} (not removed, not charged)</span>`;
     showOutput(data.lines, `peek ${data.lines.length}`);
   } catch (e) { status.innerHTML = `<span class="err">${e.message}</span>`; }
 }
 
+/* fetched history */
 async function loadFetched() {
   if (!getToken()) return;
   const status = document.getElementById('fetchedStatus');
@@ -522,11 +655,7 @@ async function loadFetched() {
   try {
     const data = await api('/api/fetched?limit=200');
     label.textContent = `fetched lines on server · total ${data.total}`;
-    if (!data.lines.length) {
-      body.textContent = '(empty)';
-      status.innerHTML = '<span class="ok">0 fetched lines</span>';
-      return;
-    }
+    if (!data.lines.length) { body.textContent = '(empty)'; status.innerHTML = '<span class="ok">0</span>'; return; }
     body.textContent = data.lines.map(
       (l, i) => `[${i + 1}] ${(l.fetched_at || '').slice(0, 19).replace('T',' ')}\n${l.text}`
     ).join('\n\n');
@@ -547,18 +676,11 @@ async function exportFetched() {
     const blob = await r.blob();
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = url;
-    a.download = 'fetched_lines.txt';
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
+    a.href = url; a.download = 'fetched_lines.txt';
+    document.body.appendChild(a); a.click(); a.remove();
     URL.revokeObjectURL(url);
     toast('export downloaded');
-  } catch (e) {
-    toast('export failed');
-    document.getElementById('fetchedStatus').innerHTML =
-      `<span class="err">${e.message}</span>`;
-  }
+  } catch (e) { toast('export failed'); }
 }
 
 async function clearFetched() {
@@ -566,17 +688,146 @@ async function clearFetched() {
   if (!confirm('Delete ALL fetched lines archived on server for this account?')) return;
   try {
     const data = await api('/api/fetched/clear', {method: 'POST'});
-    document.getElementById('fetchedStatus').innerHTML =
-      `<span class="warn">deleted ${data.deleted} archived lines</span>`;
+    document.getElementById('fetchedStatus').innerHTML = `<span class="warn">deleted ${data.deleted}</span>`;
     document.getElementById('fetchedBody').textContent = '(empty)';
     toast(`deleted ${data.deleted}`);
     refreshStats();
   } catch (e) {
-    document.getElementById('fetchedStatus').innerHTML =
-      `<span class="err">${e.message}</span>`;
+    document.getElementById('fetchedStatus').innerHTML = `<span class="err">${e.message}</span>`;
   }
 }
 
+/* credits */
+function creditTab(name, btn) {
+  document.querySelectorAll('#creditsCard .tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('creditRedeemPane').style.display = name === 'redeem' ? 'block' : 'none';
+  document.getElementById('creditHistoryPane').style.display = name === 'history' ? 'block' : 'none';
+  if (name === 'history') loadCreditHistory();
+}
+
+async function redeemVoucher() {
+  const status = document.getElementById('voucherStatus');
+  const code = document.getElementById('voucherCode').value.trim().toUpperCase();
+  if (!code) { status.innerHTML = '<span class="err">enter a code</span>'; return; }
+  status.textContent = 'redeeming…';
+  try {
+    const data = await api('/api/credits/redeem', {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({code})
+    });
+    status.innerHTML = `<span class="ok">+${data.granted} credits · new balance ${data.credits === 'inf' ? '∞' : data.credits}</span>`;
+    document.getElementById('voucherCode').value = '';
+    toast('voucher redeemed');
+    refreshStats();
+    loadCreditHistory();
+  } catch (e) { status.innerHTML = `<span class="err">${e.message}</span>`; }
+}
+
+async function loadCreditHistory() {
+  if (!getToken()) return;
+  try {
+    const data = await api('/api/credits/history?limit=50');
+    const body = document.getElementById('creditHistoryBody');
+    if (!data.history.length) { body.textContent = '(no entries)'; return; }
+    body.textContent = data.history.map(h => {
+      const t = (h.created_at || '').slice(0, 19).replace('T',' ');
+      const bal = h.balance_after === 'inf' ? '∞' : h.balance_after;
+      return `${t}  ${h.delta.padEnd(8)}  ${h.reason.padEnd(20)}  → ${bal}`;
+    }).join('\n');
+  } catch {}
+}
+
+/* leaderboard */
+async function loadLeaderboard() {
+  try {
+    const data = await api('/api/leaderboard');
+    const box = document.getElementById('leaderboardBody');
+    if (!data.leaders.length) { return; }
+    box.innerHTML = '<div class="lb-row" style="color:var(--muted);font-size:0.75rem;"><span class="lb-rank">#</span><span class="lb-name">user</span><span class="lb-fetched">fetched</span></div>' +
+      data.leaders.map((u, i) =>
+        `<div class="lb-row"><span class="lb-rank">${i+1}</span><span class="lb-name">${escapeHtml(u.username)}</span><span class="lb-fetched">${u.total_fetched}</span></div>`
+      ).join('');
+  } catch {}
+}
+
+/* owner panel */
+function ownerTab(name, btn) {
+  document.querySelectorAll('#ownerCard .tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('ownerStatsPane').style.display = name === 'stats' ? 'block' : 'none';
+  document.getElementById('ownerGrantPane').style.display = name === 'grant' ? 'block' : 'none';
+  document.getElementById('ownerVoucherPane').style.display = name === 'voucher' ? 'block' : 'none';
+  document.getElementById('ownerPoolPane').style.display = name === 'pool' ? 'block' : 'none';
+  if (name === 'stats') loadOwnerStats();
+}
+
+async function loadOwnerStats() {
+  if (getRole() !== 'owner') return;
+  const body = document.getElementById('ownerStatsBody');
+  try {
+    const data = await api('/api/admin/stats');
+    body.textContent =
+      `total users      ${data.total_users}\n` +
+      `new today        ${data.new_today}\n` +
+      `lines in pool    ${data.total_lines}\n` +
+      `total fetched    ${data.total_fetched}\n` +
+      `credits/line     ${data.credits_per_line}\n\n` +
+      'recent users:\n' +
+      data.recent_users.map(u =>
+        `  ${u.username.padEnd(20)} role=${u.role.padEnd(6)} credits=${u.credits === 'inf' ? '∞' : u.credits}  fetched=${u.total_fetched || 0}`
+      ).join('\n');
+  } catch (e) { body.textContent = 'error: ' + e.message; }
+}
+
+async function grantCredits() {
+  const username = document.getElementById('grantUser').value.trim().toLowerCase();
+  const amount = parseFloat(document.getElementById('grantAmount').value);
+  const status = document.getElementById('grantStatus');
+  if (!username || !amount || amount <= 0) { status.innerHTML = '<span class="err">username and amount>0</span>'; return; }
+  status.textContent = 'granting…';
+  try {
+    const data = await api('/api/admin/grant', {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({username, amount})
+    });
+    status.innerHTML = `<span class="ok">${username} now has ${data.credits === 'inf' ? '∞' : data.credits} credits</span>`;
+    document.getElementById('grantUser').value = '';
+    document.getElementById('grantAmount').value = '';
+    toast('granted');
+  } catch (e) { status.innerHTML = `<span class="err">${e.message}</span>`; }
+}
+
+async function createVoucher() {
+  const amount = parseFloat(document.getElementById('voucherAmount').value);
+  const count = parseInt(document.getElementById('voucherCount').value);
+  const status = document.getElementById('voucherCreateStatus');
+  if (!amount || amount <= 0 || !count || count < 1) { status.innerHTML = '<span class="err">amount>0, count 1..500</span>'; return; }
+  status.textContent = 'creating…';
+  try {
+    const data = await api('/api/admin/voucher', {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({amount, count})
+    });
+    status.innerHTML = `<span class="ok">${data.codes.length} voucher(s) created, ${data.amount} each</span>`;
+    document.getElementById('voucherBox').style.display = 'block';
+    document.getElementById('voucherBody').textContent = data.codes.join('\n');
+    toast('vouchers ready');
+  } catch (e) { status.innerHTML = `<span class="err">${e.message}</span>`; }
+}
+
+async function clearPool() {
+  if (getRole() !== 'owner') return;
+  if (!confirm('Wipe the ENTIRE shared pool? All accounts lose their pending lines.')) return;
+  try {
+    const data = await api('/api/admin/pool/clear', {method: 'POST'});
+    document.getElementById('poolStatus').innerHTML = `<span class="warn">deleted ${data.deleted} lines</span>`;
+    toast('pool wiped');
+    refreshStats();
+  } catch (e) { document.getElementById('poolStatus').innerHTML = `<span class="err">${e.message}</span>`; }
+}
+
+/* boot */
 async function validateSavedToken() {
   const t = getToken();
   if (!t) { renderAuth(); return; }

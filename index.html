@@ -10,8 +10,7 @@
     --border: rgba(255,255,255,0.07); --border-hover: rgba(255,255,255,0.14);
     --text: #eef0f4; --muted: #7a8190; --dim: #4a5160;
     --accent: #6ea8ff; --accent2: #8b7cff;
-    --green: #3dd68c; --red: #ff6b6b; --orange: #ffb347;
-    --gold: #ffd166;
+    --green: #3dd68c; --red: #ff6b6b; --orange: #ffb347; --gold: #ffd166;
     --glow: 0 0 40px rgba(110,168,255,0.12); --radius: 16px;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -27,7 +26,7 @@
       radial-gradient(ellipse 60% 40% at 90% 10%, rgba(139,124,255,0.07), transparent 45%);
     pointer-events: none; z-index: 0;
   }
-  .wrap { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding: 2.5rem 1.25rem 4rem; }
+  .wrap { position: relative; z-index: 1; max-width: 920px; margin: 0 auto; padding: 2.5rem 1.25rem 4rem; }
   header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; }
   .brand h1 {
     font-size: 1.65rem; font-weight: 700; letter-spacing: -0.03em;
@@ -36,7 +35,7 @@
   }
   .brand p { color: var(--muted); font-size: 0.88rem; margin-top: 0.2rem; }
   .pill-row { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; }
-  .live-pill, .credit-pill, .role-pill {
+  .pill {
     display: inline-flex; align-items: center; gap: 0.4rem;
     font-size: 0.72rem; font-weight: 600;
     padding: 0.3rem 0.65rem; border-radius: 999px; letter-spacing: 0.02em;
@@ -52,6 +51,7 @@
   .credit-pill { background: rgba(255,209,102,0.1); border: 1px solid rgba(255,209,102,0.3); color: var(--gold); font-family: monospace; font-size: 0.78rem; }
   .role-pill { background: rgba(139,124,255,0.15); border: 1px solid rgba(139,124,255,0.35); color: var(--accent2); }
   .role-pill.owner { background: rgba(255,209,102,0.15); border-color: rgba(255,209,102,0.4); color: var(--gold); }
+  .active-batch-pill { background: rgba(110,168,255,0.1); border: 1px solid rgba(110,168,255,0.3); color: var(--accent); font-family: monospace; font-size: 0.74rem; }
   @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.35;} }
   .card {
     background: var(--card); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
@@ -107,7 +107,6 @@
   .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
   .btn-ghost:hover:not(:disabled) { border-color: var(--border-hover); color: var(--text); }
   .btn-danger { background: rgba(255,107,107,0.12); color: var(--red); border: 1px solid rgba(255,107,107,0.25); }
-  .btn-danger:hover:not(:disabled) { background: rgba(255,107,107,0.2); }
   .btn-gold { background: linear-gradient(135deg, var(--gold), #f6b73c); color: #221200; box-shadow: 0 0 30px rgba(255,209,102,0.2); }
   .btn-full { width: 100%; }
   .btn-row { display: flex; gap: 0.5rem; flex-wrap: wrap; }
@@ -117,20 +116,30 @@
   .stat-val { font-family: monospace; font-size: 1.35rem; font-weight: 600; color: var(--text); }
   .stat-val.gold { color: var(--gold); }
   .stat-label { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0.15rem; }
-  .output-box { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; margin-top: 0.9rem; overflow: hidden; display: none; }
+  .output-box { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; margin-top: 0.9rem; overflow: hidden; }
   .output-head { display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0.85rem; border-bottom: 1px solid var(--border); font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
   .output-body { padding: 0.85rem 1rem; font-family: monospace; font-size: 0.82rem; line-height: 1.6; max-height: 280px; overflow-y: auto; white-space: pre-wrap; word-break: break-all; }
   .status { font-size: 0.84rem; margin-top: 0.7rem; min-height: 1.2em; }
   .ok { color: var(--green); } .err { color: var(--red); } .warn { color: var(--orange); }
-  .queue-preview { margin-top: 0.9rem; max-height: 180px; overflow-y: auto; border: 1px solid var(--border); border-radius: 10px; background: var(--bg2); display: none; }
-  .queue-item { font-family: monospace; font-size: 0.78rem; padding: 0.4rem 0.75rem; border-bottom: 1px solid var(--border); color: var(--muted); display: flex; gap: 0.6rem; }
-  .queue-item:last-child { border-bottom: none; }
-  .queue-item .idx { color: var(--dim); min-width: 1.5rem; }
-  .lb-row { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--border); font-size: 0.85rem; }
-  .lb-row:last-child { border-bottom: none; }
-  .lb-rank { color: var(--gold); font-weight: 700; font-family: monospace; min-width: 2.2rem; }
-  .lb-name { flex: 1; font-weight: 500; }
-  .lb-fetched { color: var(--muted); font-size: 0.78rem; font-family: monospace; }
+  .batch-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0.75rem 0.9rem; border-radius: 10px; border: 1px solid var(--border);
+    background: var(--bg2); margin-bottom: 0.5rem; cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .batch-item:hover { border-color: rgba(110,168,255,0.4); }
+  .batch-item.active { border-color: var(--accent); background: rgba(110,168,255,0.08); }
+  .batch-label-big { font-size: 0.98rem; font-weight: 700; color: var(--text); letter-spacing: -0.01em; }
+  .batch-code-small { font-family: monospace; font-weight: 600; color: var(--accent); font-size: 0.78rem; margin-top: 0.15rem; }
+  .batch-count { font-family: monospace; font-size: 1.15rem; color: var(--gold); font-weight: 700; }
+  .batch-empty { font-size: 0.85rem; color: var(--muted); text-align: center; padding: 1rem; }
+  .quick-fetch {
+    background: rgba(110,168,255,0.06); border: 1px solid rgba(110,168,255,0.25);
+    border-radius: 12px; padding: 1rem; margin-bottom: 1rem;
+  }
+  .quick-fetch-title { font-size: 0.78rem; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.75rem; }
+  .quick-row { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .quick-row input { flex: 2; min-width: 180px; }
   #toast {
     position: fixed; bottom: 1.5rem; left: 50%;
     transform: translateX(-50%) translateY(120%);
@@ -146,9 +155,6 @@
   .stepper input { width: 64px; text-align: center; border: none; border-left: 1px solid var(--border); border-right: 1px solid var(--border); border-radius: 0; background: transparent; font-family: monospace; font-size: 0.95rem; margin: 0; padding: 0.5rem 0; }
   .stepper input:focus { box-shadow: none; border-color: var(--border); }
   .divider { height: 1px; background: var(--border); margin: 1rem 0; }
-  .tab-row { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 1rem; }
-  .tab { padding: 0.4rem 0.9rem; border-radius: 8px; background: transparent; border: 1px solid var(--border); color: var(--muted); font-size: 0.8rem; cursor: pointer; }
-  .tab.active { background: rgba(110,168,255,0.12); border-color: rgba(110,168,255,0.3); color: var(--accent); }
   @media (max-width: 720px) { .stats { grid-template-columns: repeat(2, 1fr); } }
   @media (max-width: 560px) {
     .stats { grid-template-columns: 1fr; }
@@ -162,20 +168,21 @@
   <header>
     <div class="brand">
       <h1>TXT Loader</h1>
-      <p>shared pool · credits · accounts</p>
+      <p>named serial batches · credits · accounts</p>
     </div>
     <div class="pill-row">
-      <div class="credit-pill" id="creditPill">— credits</div>
-      <div class="role-pill" id="rolePill" style="display:none;">—</div>
-      <div class="live-pill" id="connPill">checking</div>
+      <div class="pill active-batch-pill" id="activeBatchPill" style="display:none;">—</div>
+      <div class="pill credit-pill" id="creditPill">— credits</div>
+      <div class="pill role-pill" id="rolePill" style="display:none;">—</div>
+      <div class="pill live-pill" id="connPill">checking</div>
     </div>
   </header>
 
   <div class="stats">
     <div class="stat"><div class="stat-val gold" id="statCredits">—</div><div class="stat-label">my credits</div></div>
-    <div class="stat"><div class="stat-val" id="statGlobal">—</div><div class="stat-label">lines in pool</div></div>
+    <div class="stat"><div class="stat-val" id="statBatches">—</div><div class="stat-label">active batches</div></div>
+    <div class="stat"><div class="stat-val" id="statGlobal">—</div><div class="stat-label">lines (all batches)</div></div>
     <div class="stat"><div class="stat-val" id="statFetchedServer">0</div><div class="stat-label">my fetched (server)</div></div>
-    <div class="stat"><div class="stat-val" id="statSessionFetched">0</div><div class="stat-label">fetched this session</div></div>
   </div>
 
   <div class="card" id="authCard">
@@ -200,36 +207,71 @@
         <input class="key-input" type="text" id="authWho" readonly>
         <button class="btn-ghost" onclick="doLogout()">logout</button>
       </div>
-      <p class="status" style="color:var(--muted);font-size:0.75rem;margin-top:0.5rem;">
-        logged in · token cached · auto-login on reload
-      </p>
     </div>
   </div>
 
-  <div class="card" id="creditsCard" style="display:none;">
-    <div class="card-title"><span class="num">¢</span> Credits</div>
-    <div class="tab-row">
-      <button class="tab active" onclick="creditTab('redeem', this)">Redeem voucher</button>
-      <button class="tab" onclick="creditTab('history', this)">History</button>
+  <div class="card" id="quickFetchCard" style="display:none;">
+    <div class="card-title"><span class="num">▶</span> Quick fetch by serial</div>
+    <div class="quick-fetch">
+      <div class="quick-fetch-title">type the serial code (e.g. LUN-A1B2C3)</div>
+      <div class="quick-row">
+        <input type="text" id="quickSerial" placeholder="LUN-A1B2C3" style="text-transform:uppercase;" oninput="quickSerialTyped()">
+        <div class="stepper">
+          <button type="button" onclick="quickStep(-1)">−</button>
+          <input type="number" id="quickAmount" value="100" min="1">
+          <button type="button" onclick="quickStep(1)">+</button>
+        </div>
+        <button class="btn-primary" onclick="quickFetch()">Fetch</button>
+        <button class="btn-ghost" onclick="quickPeek()">Peek</button>
+      </div>
+      <div class="status" id="quickStatus"></div>
+      <div id="quickResolved" style="display:none;margin-top:0.75rem;padding:0.75rem;background:rgba(61,214,140,0.05);border:1px solid rgba(61,214,140,0.2);border-radius:10px;">
+        <div style="font-size:0.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;">resolved batch</div>
+        <div class="batch-label-big" id="quickLabel">—</div>
+        <div class="batch-code-small" id="quickCode">—</div>
+        <div style="font-size:0.78rem;color:var(--muted);margin-top:0.4rem;">lines available: <span id="quickCount" style="color:var(--gold);font-family:monospace;font-weight:700;">—</span></div>
+      </div>
     </div>
-    <div id="creditRedeemPane">
+    <div class="output-box" id="quickOutputBox" style="display:none;">
+      <div class="output-head">
+        <span id="quickOutputLabel">result</span>
+        <button class="btn-ghost" style="padding:0.25rem 0.55rem;font-size:0.72rem;" onclick="copyQuickOutput()">copy</button>
+      </div>
+      <div class="output-body" id="quickOutput"></div>
+    </div>
+  </div>
+
+  <div class="card" id="batchesCard" style="display:none;">
+    <div class="card-title"><span class="num">🗂</span> All batches</div>
+    <div class="btn-row" style="margin-bottom:1rem;">
+      <button class="btn-ghost" onclick="loadBatches()">Refresh</button>
+      <button class="btn-primary" onclick="showCreateBatch()">+ New batch</button>
+    </div>
+    <div id="createBatchForm" style="display:none;margin-bottom:1rem;padding:1rem;background:var(--bg2);border:1px solid var(--border);border-radius:10px;">
       <div class="field">
-        <label>voucher code</label>
-        <input type="text" id="voucherCode" placeholder="LUN-XXXXXXXXXXXX" style="text-transform:uppercase;">
+        <label>label / name (e.g. CODM, MLBB, VALORANT)</label>
+        <input type="text" id="newBatchLabel" placeholder="CODM" maxlength="80">
       </div>
-      <button class="btn-gold btn-full" onclick="redeemVoucher()">Redeem</button>
-      <div class="status" id="voucherStatus"></div>
-    </div>
-    <div id="creditHistoryPane" style="display:none;">
-      <button class="btn-ghost btn-full" onclick="loadCreditHistory()" style="margin-bottom:0.75rem;">Refresh</button>
-      <div class="output-box" id="creditHistoryBox" style="display:block;">
-        <div class="output-body" id="creditHistoryBody">—</div>
+      <div class="field">
+        <label>custom serial (optional — leave blank to auto-generate)</label>
+        <input type="text" id="newBatchCode" placeholder="LUN-A1B2C3" style="text-transform:uppercase;" maxlength="24">
       </div>
+      <div class="btn-row">
+        <button class="btn-primary" onclick="createBatch()">Create</button>
+        <button class="btn-ghost" onclick="hideCreateBatch()">Cancel</button>
+      </div>
+      <div class="status" id="createBatchStatus"></div>
     </div>
+    <div id="batchesList"><div class="batch-empty">loading…</div></div>
+    <div class="status" id="batchStatus"></div>
   </div>
 
   <div class="card" id="queueCard" style="display:none;">
-    <div class="card-title"><span class="num">2</span> Add to shared pool</div>
+    <div class="card-title"><span class="num">2</span> Add lines to a batch</div>
+    <div class="field">
+      <label>target batch</label>
+      <select id="addBatch"></select>
+    </div>
     <div class="file-zone" id="dropZone" onclick="document.getElementById('file').click()">
       <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M7 18a4.6 4.4 0 0 1 0-9 5 4.6 0 0 1 11 2h1a3.5 3.5 0 0 1 0 7h-1"/><path d="M12 13v9m0 0 3-3m-3 3-3-3"/></svg>
       <span>drop <strong>.txt</strong> here or click to browse</span>
@@ -238,21 +280,25 @@
     </div>
     <div class="divider"></div>
     <div class="field">
-      <label>or paste more lines</label>
+      <label>or paste lines</label>
       <textarea id="paste" placeholder="one line per row&#10;another line&#10;…"></textarea>
     </div>
     <div class="btn-row">
-      <button class="btn-primary btn-full" onclick="uploadFile()">Upload to pool</button>
+      <button class="btn-primary btn-full" onclick="uploadFile()">Upload to batch</button>
       <button class="btn-ghost btn-full" onclick="addLines()">Add pasted</button>
     </div>
     <div class="status" id="uploadStatus"></div>
   </div>
 
   <div class="card" id="fetchCard" style="display:none;">
-    <div class="card-title"><span class="num">3</span> Fetch from shared pool</div>
-    <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;margin-bottom:1rem;">
+    <div class="card-title"><span class="num">3</span> Fetch from batch</div>
+    <div style="display:flex;align-items:flex-end;gap:1rem;flex-wrap:wrap;margin-bottom:1rem;">
+      <div style="flex:1;min-width:200px;">
+        <label>batch</label>
+        <select id="fetchBatch" onchange="updateCost()"></select>
+      </div>
       <div>
-        <label style="margin-bottom:0.4rem;">amount</label>
+        <label>amount</label>
         <div class="stepper">
           <button type="button" onclick="step(-1)">−</button>
           <input type="number" id="amount" value="5" min="1">
@@ -260,13 +306,13 @@
         </div>
       </div>
       <div>
-        <label style="margin-bottom:0.4rem;">estimated cost</label>
+        <label>estimated cost</label>
         <div class="stat-val gold" id="estCost" style="font-size:1.05rem;">1.00 credits</div>
       </div>
     </div>
     <div class="btn-row">
       <button class="btn-primary" onclick="fetchLines()">Fetch &amp; spend credits</button>
-      <button class="btn-ghost" onclick="peek()">Peek pool</button>
+      <button class="btn-ghost" onclick="peek()">Peek batch</button>
     </div>
     <div class="status" id="fetchStatus"></div>
     <div class="output-box" id="outputBox">
@@ -276,7 +322,6 @@
       </div>
       <div class="output-body" id="output"></div>
     </div>
-    <div class="queue-preview" id="queuePreview"></div>
   </div>
 
   <div class="card" id="historyCard" style="display:none;">
@@ -287,58 +332,20 @@
       <button class="btn-danger" onclick="clearFetched()">Clear history</button>
     </div>
     <div class="status" id="fetchedStatus"></div>
-    <div class="output-box" style="display:block; margin-top:0.9rem;">
-      <div class="output-head">
-        <span id="fetchedLabel">fetched lines on server</span>
-      </div>
+    <div class="output-box" style="margin-top:0.9rem;">
+      <div class="output-head"><span id="fetchedLabel">fetched lines</span></div>
       <div class="output-body" id="fetchedBody">—</div>
-    </div>
-  </div>
-
-  <div class="card" id="leaderboardCard" style="display:none;">
-    <div class="card-title"><span class="num">★</span> Leaderboard</div>
-    <div id="leaderboardBody" style="border:1px solid var(--border); border-radius:10px; overflow:hidden;">
-      <div class="lb-row" style="color:var(--muted);font-size:0.75rem;"><span class="lb-rank">#</span><span class="lb-name">user</span><span class="lb-fetched">fetched</span></div>
     </div>
   </div>
 
   <div class="card" id="ownerCard" style="display:none;">
     <div class="card-title"><span class="num">⚡</span> Owner panel</div>
-    <div class="tab-row">
-      <button class="tab active" onclick="ownerTab('stats', this)">Stats</button>
-      <button class="tab" onclick="ownerTab('grant', this)">Grant credits</button>
-      <button class="tab" onclick="ownerTab('voucher', this)">Vouchers</button>
-      <button class="tab" onclick="ownerTab('pool', this)">Pool</button>
+    <div class="btn-row" style="margin-bottom:1rem;">
+      <button class="btn-ghost" onclick="loadOwnerStats()">Refresh stats</button>
     </div>
-
-    <div id="ownerStatsPane">
-      <button class="btn-ghost btn-full" onclick="loadOwnerStats()" style="margin-bottom:0.75rem;">Refresh</button>
-      <div class="output-box" style="display:block;">
-        <div class="output-body" id="ownerStatsBody">—</div>
-      </div>
-    </div>
-
-    <div id="ownerGrantPane" style="display:none;">
-      <div class="field"><label>username</label><input type="text" id="grantUser" placeholder="username"></div>
-      <div class="field"><label>amount</label><input type="number" id="grantAmount" placeholder="10" step="0.01" min="0.01"></div>
-      <button class="btn-gold btn-full" onclick="grantCredits()">Grant</button>
-      <div class="status" id="grantStatus"></div>
-    </div>
-
-    <div id="ownerVoucherPane" style="display:none;">
-      <div class="field"><label>amount per voucher</label><input type="number" id="voucherAmount" value="10" step="0.01" min="0.01"></div>
-      <div class="field"><label>count</label><input type="number" id="voucherCount" value="5" min="1" max="500"></div>
-      <button class="btn-gold btn-full" onclick="createVoucher()">Create</button>
-      <div class="status" id="voucherCreateStatus"></div>
-      <div class="output-box" id="voucherBox">
-        <div class="output-head">codes</div>
-        <div class="output-body" id="voucherBody"></div>
-      </div>
-    </div>
-
-    <div id="ownerPoolPane" style="display:none;">
-      <button class="btn-danger btn-full" onclick="clearPool()">Wipe entire pool</button>
-      <div class="status" id="poolStatus"></div>
+    <div class="output-box">
+      <div class="output-head">server state</div>
+      <div class="output-body" id="ownerStatsBody">—</div>
     </div>
   </div>
 </div>
@@ -351,15 +358,18 @@ const TOKEN_KEY = 'txtloader_token';
 const USER_KEY  = 'txtloader_username';
 const KEY_KEY   = 'txtloader_api_key';
 const ROLE_KEY  = 'txtloader_role';
+const BATCH_KEY = 'txtloader_active_batch';
 
-let sessionFetched = 0;
-let lastOutput = '';
 let CREDITS_PER_LINE = 0.2;
+let lastOutput = '';
+let lastQuickOutput = '';
+let cachedBatches = [];
+let activeBatch = '';
+let quickTimer = null;
 
 function getToken()    { return localStorage.getItem(TOKEN_KEY) || ''; }
 function getUsername() { return localStorage.getItem(USER_KEY) || ''; }
 function getRole()     { return localStorage.getItem(ROLE_KEY) || 'user'; }
-function getKey()      { return localStorage.getItem(KEY_KEY) || ''; }
 
 function setAuth(token, username, api_key, role) {
   localStorage.setItem(TOKEN_KEY, token);
@@ -369,11 +379,12 @@ function setAuth(token, username, api_key, role) {
   renderAuth();
 }
 function clearAuth() {
-  localStorage.removeItem(TOKEN_KEY);
-  localStorage.removeItem(USER_KEY);
-  localStorage.removeItem(KEY_KEY);
-  localStorage.removeItem(ROLE_KEY);
+  [TOKEN_KEY, USER_KEY, KEY_KEY, ROLE_KEY].forEach(k => localStorage.removeItem(k));
   renderAuth();
+}
+
+function findBatch(code) {
+  return cachedBatches.find(b => b.batch_code.toLowerCase() === (code||'').toLowerCase()) || null;
 }
 
 function renderAuth() {
@@ -381,27 +392,35 @@ function renderAuth() {
   const role = getRole();
   document.getElementById('authLoggedOut').style.display = loggedIn ? 'none' : 'block';
   document.getElementById('authLoggedIn').style.display  = loggedIn ? 'block' : 'none';
-  document.getElementById('creditsCard').style.display   = loggedIn ? 'block' : 'none';
-  document.getElementById('queueCard').style.display     = loggedIn ? 'block' : 'none';
-  document.getElementById('fetchCard').style.display     = loggedIn ? 'block' : 'none';
-  document.getElementById('historyCard').style.display   = loggedIn ? 'block' : 'none';
-  document.getElementById('leaderboardCard').style.display = loggedIn ? 'block' : 'none';
-  document.getElementById('ownerCard').style.display     = (loggedIn && role === 'owner') ? 'block' : 'none';
+  ['quickFetchCard','batchesCard','queueCard','fetchCard','historyCard'].forEach(id => {
+    document.getElementById(id).style.display = loggedIn ? 'block' : 'none';
+  });
+  document.getElementById('ownerCard').style.display =
+    (loggedIn && role === 'owner') ? 'block' : 'none';
   const rolePill = document.getElementById('rolePill');
   if (loggedIn) {
     document.getElementById('authWho').value = getUsername();
     rolePill.style.display = 'inline-flex';
     rolePill.textContent = role.toUpperCase();
     rolePill.classList.toggle('owner', role === 'owner');
+    updateActivePill();
+    loadBatches();
     loadFetched();
-    loadCreditHistory();
-    loadLeaderboard();
     if (role === 'owner') loadOwnerStats();
   } else {
     rolePill.style.display = 'none';
+    document.getElementById('activeBatchPill').style.display = 'none';
     document.getElementById('creditPill').textContent = '— credits';
   }
   updateCost();
+}
+
+function updateActivePill() {
+  const pill = document.getElementById('activeBatchPill');
+  if (!activeBatch) { pill.style.display = 'none'; return; }
+  const b = findBatch(activeBatch);
+  pill.style.display = 'inline-flex';
+  pill.textContent = b ? `${b.label} · ${b.batch_code}` : activeBatch;
 }
 
 async function doLogin() {
@@ -421,9 +440,7 @@ async function doLogin() {
     document.getElementById('authPass').value = '';
     s.innerHTML = '<span class="ok">logged in</span>';
     refreshStats();
-  } catch (e) {
-    s.innerHTML = '<span class="err">' + e.message + '</span>';
-  }
+  } catch (e) { s.innerHTML = '<span class="err">' + e.message + '</span>'; }
 }
 
 async function doSignup() {
@@ -432,7 +449,7 @@ async function doSignup() {
   const s = document.getElementById('authStatus');
   if (!u || !p) { s.innerHTML = '<span class="err">username and password required</span>'; return; }
   if (p.length < 8) { s.innerHTML = '<span class="err">password 8+ chars</span>'; return; }
-  s.textContent = 'creating account…';
+  s.textContent = 'creating…';
   try {
     const r = await fetch(BASE + '/api/signup', {
       method: 'POST', headers: {'Content-Type': 'application/json'},
@@ -444,16 +461,12 @@ async function doSignup() {
     document.getElementById('authPass').value = '';
     s.innerHTML = `<span class="ok">account created · ${data.credits} credits</span>`;
     refreshStats();
-  } catch (e) {
-    s.innerHTML = '<span class="err">' + e.message + '</span>';
-  }
+  } catch (e) { s.innerHTML = '<span class="err">' + e.message + '</span>'; }
 }
 
 function doLogout() {
-  if (!confirm('Log out of this browser?')) return;
-  clearAuth();
-  toast('logged out');
-  refreshStats();
+  if (!confirm('Log out?')) return;
+  clearAuth(); toast('logged out'); refreshStats();
 }
 
 function toast(msg) {
@@ -468,6 +481,10 @@ function step(d) {
   const el = document.getElementById('amount');
   el.value = Math.max(1, (parseInt(el.value) || 1) + d);
   updateCost();
+}
+function quickStep(d) {
+  const el = document.getElementById('quickAmount');
+  el.value = Math.max(1, (parseInt(el.value) || 1) + d);
 }
 document.getElementById('amount').addEventListener('input', updateCost);
 
@@ -487,8 +504,17 @@ function showOutput(lines, label) {
   document.getElementById('outputLabel').textContent = label || 'result';
   document.getElementById('outputBox').style.display = 'block';
 }
+function showQuickOutput(lines, label) {
+  lastQuickOutput = lines.join('\n');
+  document.getElementById('quickOutput').textContent = lastQuickOutput || '(empty)';
+  document.getElementById('quickOutputLabel').textContent = label || 'result';
+  document.getElementById('quickOutputBox').style.display = 'block';
+}
 function copyOutput() {
   navigator.clipboard.writeText(lastOutput).then(() => toast('output copied'));
+}
+function copyQuickOutput() {
+  navigator.clipboard.writeText(lastQuickOutput).then(() => toast('output copied'));
 }
 
 async function api(path, opts = {}) {
@@ -497,12 +523,10 @@ async function api(path, opts = {}) {
   opts.headers = Object.assign({'Authorization': 'Bearer ' + token}, opts.headers || {});
   const r = await fetch(BASE + path, opts);
   const data = await r.json().catch(() => ({}));
-  if (r.status === 401) { clearAuth(); throw new Error('session expired — login'); }
+  if (r.status === 401) { clearAuth(); throw new Error('session expired'); }
   if (!r.ok) {
-    const msg = data.error || r.statusText;
-    const err = new Error(msg);
-    err.payload = data;
-    err.status = r.status;
+    const err = new Error(data.error || r.statusText);
+    err.payload = data; err.status = r.status;
     throw err;
   }
   return data;
@@ -512,8 +536,8 @@ async function healthCheck() {
   const pill = document.getElementById('connPill');
   try {
     const r = await fetch(BASE + '/api/health');
-    const data = await r.json();
-    if (data.ok) { pill.classList.remove('offline'); pill.textContent = 'mongo live'; }
+    const d = await r.json();
+    if (d.ok) { pill.classList.remove('offline'); pill.textContent = 'online'; }
     else throw new Error();
   } catch {
     pill.classList.add('offline'); pill.textContent = 'offline';
@@ -525,38 +549,205 @@ async function refreshStats() {
     const headers = {};
     if (getToken()) headers['Authorization'] = 'Bearer ' + getToken();
     const r = await fetch(BASE + '/api/stats', { headers });
-    const data = await r.json();
-    if (!data.ok) throw new Error();
-    if (data.credits_per_line) {
-      const n = parseFloat(data.credits_per_line);
+    const d = await r.json();
+    if (!d.ok) throw new Error();
+    if (d.credits_per_line) {
+      const n = parseFloat(d.credits_per_line);
       if (n > 0) CREDITS_PER_LINE = n;
     }
-    document.getElementById('statGlobal').textContent = data.total_lines;
-    document.getElementById('statFetchedServer').textContent = (data.my_fetched ?? 0);
-    const credits = data.credits ?? '—';
+    document.getElementById('statGlobal').textContent = d.total_lines;
+    document.getElementById('statBatches').textContent = d.total_batches;
+    document.getElementById('statFetchedServer').textContent = (d.my_fetched ?? 0);
+    const credits = d.credits ?? '—';
     document.getElementById('statCredits').textContent = credits === 'inf' ? '∞' : credits;
     document.getElementById('creditPill').textContent = (credits === 'inf' ? '∞' : credits) + ' credits';
     updateCost();
-    if (data.total_lines > 0 && getToken()) {
-      const peek = await api('/api/peek?amount=8').catch(() => ({lines: []}));
-      const prev = document.getElementById('queuePreview');
-      if (peek.lines.length) {
-        prev.style.display = 'block';
-        prev.innerHTML = peek.lines.map((l, i) =>
-          `<div class="queue-item"><span class="idx">${i}</span><span>${escapeHtml(l)}</span></div>`
-        ).join('') + (data.total_lines > 8
-          ? `<div class="queue-item"><span class="idx">…</span><span>+${data.total_lines - 8} more</span></div>`
-          : '');
-      } else prev.style.display = 'none';
-    } else {
-      document.getElementById('queuePreview').style.display = 'none';
-    }
+  } catch {}
+}
+
+async function loadBatches() {
+  try {
+    const d = await api('/api/batch');
+    cachedBatches = d.batches;
+    if (!activeBatch && cachedBatches.length) activeBatch = cachedBatches[0].batch_code;
+    renderBatches();
+    renderBatchSelects();
+    updateActivePill();
+    resolveQuickFromCache();
   } catch (e) {
-    document.getElementById('statGlobal').textContent = '—';
+    document.getElementById('batchStatus').innerHTML = `<span class="err">${e.message}</span>`;
   }
 }
 
-/* upload */
+function renderBatches() {
+  const list = document.getElementById('batchesList');
+  if (!cachedBatches.length) {
+    list.innerHTML = '<div class="batch-empty">no batches yet — create one to start</div>';
+    return;
+  }
+  list.innerHTML = cachedBatches.map(b => `
+    <div class="batch-item ${b.batch_code === activeBatch ? 'active' : ''}" onclick="pickBatch('${b.batch_code}')">
+      <div>
+        <div class="batch-label-big">${escapeHtml(b.label)}</div>
+        <div class="batch-code-small">${escapeHtml(b.batch_code)} · ${b.owner}${b.archived ? ' · archived' : ''}</div>
+      </div>
+      <div class="batch-count">${b.count}</div>
+    </div>
+  `).join('');
+}
+
+function renderBatchSelects() {
+  const opts = cachedBatches.map(b =>
+    `<option value="${b.batch_code}">${escapeHtml(b.label)} · ${b.batch_code} (${b.count})</option>`
+  ).join('');
+  ['addBatch', 'fetchBatch'].forEach(id => {
+    const el = document.getElementById(id);
+    el.innerHTML = opts;
+    if (activeBatch) el.value = activeBatch;
+  });
+}
+
+function pickBatch(code) {
+  activeBatch = code;
+  localStorage.setItem(BATCH_KEY, code);
+  renderBatches();
+  const fb = document.getElementById('fetchBatch');
+  const ab = document.getElementById('addBatch');
+  if (fb) fb.value = code;
+  if (ab) ab.value = code;
+  updateActivePill();
+  updateCost();
+  refreshStats();
+}
+
+function showCreateBatch() { document.getElementById('createBatchForm').style.display = 'block'; }
+function hideCreateBatch() { document.getElementById('createBatchForm').style.display = 'none'; }
+
+async function createBatch() {
+  const label = document.getElementById('newBatchLabel').value.trim();
+  const customCode = document.getElementById('newBatchCode').value.trim().toUpperCase();
+  const status = document.getElementById('createBatchStatus');
+  if (!label) { status.innerHTML = '<span class="err">label required (e.g. CODM)</span>'; return; }
+  status.textContent = 'creating…';
+  try {
+    const body = { label };
+    if (customCode) body.code = customCode;
+    const d = await api('/api/batch/create', {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(body)
+    });
+    toast(`batch created: ${d.batch_code}`);
+    document.getElementById('newBatchLabel').value = '';
+    document.getElementById('newBatchCode').value = '';
+    status.innerHTML = `<span class="ok">${d.batch_code}</span>`;
+    await loadBatches();
+    pickBatch(d.batch_code);
+    setTimeout(hideCreateBatch, 800);
+  } catch (e) { status.innerHTML = `<span class="err">${e.message}</span>`; }
+}
+
+function quickSerialTyped() {
+  const raw = document.getElementById('quickSerial').value.trim().toUpperCase();
+  clearTimeout(quickTimer);
+  if (!raw) {
+    document.getElementById('quickResolved').style.display = 'none';
+    document.getElementById('quickStatus').innerHTML = '';
+    return;
+  }
+  document.getElementById('quickStatus').textContent = 'resolving…';
+  quickTimer = setTimeout(() => resolveQuick(raw), 300);
+}
+
+async function resolveQuick(code) {
+  let amountFromSerial = null;
+  const m = code.match(/^(.+?):(\d+)$/);
+  if (m) {
+    code = m[1].trim();
+    amountFromSerial = parseInt(m[2]);
+    document.getElementById('quickAmount').value = Math.max(1, amountFromSerial);
+  }
+  const cached = findBatch(code);
+  if (cached) {
+    showQuickResolved(cached);
+    document.getElementById('quickStatus').innerHTML = '<span class="ok">batch found (cached)</span>';
+    return;
+  }
+  try {
+    const d = await api('/api/batch/' + encodeURIComponent(code));
+    if (d.ok) {
+      showQuickResolved(d);
+      document.getElementById('quickStatus').innerHTML = '<span class="ok">batch found</span>';
+    }
+  } catch (e) {
+    document.getElementById('quickResolved').style.display = 'none';
+    document.getElementById('quickStatus').innerHTML = `<span class="err">${e.message}</span>`;
+  }
+}
+
+function resolveQuickFromCache() {
+  const raw = document.getElementById('quickSerial').value.trim().toUpperCase();
+  if (!raw) return;
+  let code = raw;
+  const m = raw.match(/^(.+?):(\d+)$/);
+  if (m) code = m[1].trim();
+  const b = findBatch(code);
+  if (b) showQuickResolved(b);
+}
+
+function showQuickResolved(b) {
+  document.getElementById('quickResolved').style.display = 'block';
+  document.getElementById('quickLabel').textContent = b.label;
+  document.getElementById('quickCode').textContent = b.batch_code;
+  document.getElementById('quickCount').textContent = b.count;
+}
+
+async function quickFetch() {
+  const raw = document.getElementById('quickSerial').value.trim().toUpperCase();
+  const status = document.getElementById('quickStatus');
+  if (!raw) { status.innerHTML = '<span class="err">type a serial code</span>'; return; }
+  let code = raw;
+  const m = raw.match(/^(.+?):(\d+)$/);
+  if (m) code = m[1].trim();
+  const amount = Math.max(1, parseInt(document.getElementById('quickAmount').value) || 1);
+  status.textContent = 'fetching…';
+  try {
+    const d = await api('/api/fetch', {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({batch_code: code, amount})
+    });
+    status.innerHTML = `<span class="ok">got ${d.lines.length} from <b>${escapeHtml(d.batch_label || d.batch_code)}</b> · paid ${d.cost} · left ${d.remaining} · balance ${d.credits === 'inf' ? '∞' : d.credits}</span>`;
+    showQuickOutput(d.lines, `${d.batch_label || d.batch_code} · fetched ${d.lines.length}`);
+    showOutput(d.lines, `${d.batch_label || d.batch_code} · fetched ${d.lines.length}`);
+    toast(`fetched ${d.lines.length} from ${d.batch_label || d.batch_code}`);
+    await loadBatches();
+    refreshStats();
+    loadFetched();
+  } catch (e) {
+    if (e.status === 402) {
+      const p = e.payload || {};
+      status.innerHTML = `<span class="err">insufficient credits — need ${p.cost}, have ${p.have}. affordable: ${p.affordable_lines}</span>`;
+    } else {
+      status.innerHTML = `<span class="err">${e.message}</span>`;
+    }
+  }
+}
+
+async function quickPeek() {
+  const raw = document.getElementById('quickSerial').value.trim().toUpperCase();
+  if (!raw) return;
+  let code = raw;
+  const m = raw.match(/^(.+?):(\d+)$/);
+  if (m) code = m[1].trim();
+  const amount = Math.max(1, parseInt(document.getElementById('quickAmount').value) || 1);
+  const status = document.getElementById('quickStatus');
+  try {
+    const d = await api(`/api/peek?batch_code=${encodeURIComponent(code)}&amount=${amount}`);
+    const label = (findBatch(code) || {}).label || d.batch_label || code;
+    status.innerHTML = `<span class="ok">peek ${d.lines.length} from <b>${escapeHtml(label)}</b> (no charge)</span>`;
+    showQuickOutput(d.lines, `${label} · peek ${d.lines.length}`);
+  } catch (e) { status.innerHTML = `<span class="err">${e.message}</span>`; }
+}
+
 const drop = document.getElementById('dropZone');
 const fileInput = document.getElementById('file');
 ['dragenter','dragover'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('drag'); }));
@@ -574,61 +765,68 @@ fileInput.addEventListener('change', () => {
 async function uploadFile() {
   const status = document.getElementById('uploadStatus');
   if (!fileInput.files.length) { status.innerHTML = '<span class="err">pick a .txt first</span>'; return; }
+  const code = document.getElementById('addBatch').value;
+  if (!code) { status.innerHTML = '<span class="err">pick a batch</span>'; return; }
   const fd = new FormData();
   fd.append('file', fileInput.files[0]);
+  fd.append('batch_code', code);
   status.textContent = 'uploading…';
   try {
     const r = await fetch(BASE + '/api/upload', {
       method: 'POST', headers: {'Authorization': 'Bearer ' + getToken()}, body: fd
     });
-    const data = await r.json();
-    if (!r.ok) throw new Error(data.error || 'fail');
-    status.innerHTML = `<span class="ok">+${data.added} · pool ${data.total}</span>`;
-    toast(`+${data.added} to pool`);
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.error || 'fail');
+    status.innerHTML = `<span class="ok">+${d.added} → ${d.batch_code} (total ${d.total})</span>`;
+    toast(`+${d.added} → ${d.batch_code}`);
     fileInput.value = '';
     document.getElementById('fileName').textContent = '';
+    await loadBatches();
     refreshStats();
   } catch (e) { status.innerHTML = `<span class="err">${e.message}</span>`; }
 }
 
 async function addLines() {
   const status = document.getElementById('uploadStatus');
+  const code = document.getElementById('addBatch').value;
+  if (!code) { status.innerHTML = '<span class="err">pick a batch</span>'; return; }
   const lines = document.getElementById('paste').value.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
   if (!lines.length) { status.innerHTML = '<span class="err">paste some lines</span>'; return; }
   status.textContent = 'adding…';
   try {
-    const data = await api('/api/add', {
+    const d = await api('/api/add', {
       method: 'POST', headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({lines})
+      body: JSON.stringify({batch_code: code, lines})
     });
-    status.innerHTML = `<span class="ok">+${data.added} · pool ${data.total}</span>`;
-    toast(`+${data.added} to pool`);
+    status.innerHTML = `<span class="ok">+${d.added} → ${d.batch_code} (total ${d.total})</span>`;
+    toast(`+${d.added} → ${d.batch_code}`);
     document.getElementById('paste').value = '';
+    await loadBatches();
     refreshStats();
   } catch (e) { status.innerHTML = `<span class="err">${e.message}</span>`; }
 }
 
 async function fetchLines() {
+  const code = document.getElementById('fetchBatch').value;
+  if (!code) { document.getElementById('fetchStatus').innerHTML = '<span class="err">pick a batch</span>'; return; }
   const amount = Math.max(1, parseInt(document.getElementById('amount').value) || 1);
   const status = document.getElementById('fetchStatus');
   status.textContent = 'fetching…';
   try {
-    const data = await api('/api/fetch', {
+    const d = await api('/api/fetch', {
       method: 'POST', headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({amount})
+      body: JSON.stringify({batch_code: code, amount})
     });
-    sessionFetched += data.lines.length;
-    document.getElementById('statSessionFetched').textContent = sessionFetched;
-    status.innerHTML = `<span class="ok">got ${data.lines.length} · paid ${data.cost} · pool ${data.remaining} · balance ${data.credits === 'inf' ? '∞' : data.credits}</span>`;
-    showOutput(data.lines, `fetched ${data.lines.length}`);
-    toast(`fetched ${data.lines.length}`);
+    status.innerHTML = `<span class="ok">got ${d.lines.length} from <b>${escapeHtml(d.batch_label || d.batch_code)}</b> · paid ${d.cost} · left ${d.remaining} · balance ${d.credits === 'inf' ? '∞' : d.credits}</span>`;
+    showOutput(d.lines, `${d.batch_label || d.batch_code} · fetched ${d.lines.length}`);
+    toast(`fetched ${d.lines.length} from ${d.batch_label || d.batch_code}`);
+    await loadBatches();
     refreshStats();
     loadFetched();
-    loadCreditHistory();
   } catch (e) {
     if (e.status === 402) {
       const p = e.payload || {};
-      status.innerHTML = `<span class="err">insufficient credits — need ${p.cost}, have ${p.have}. affordable: ${p.affordable_lines} lines</span>`;
+      status.innerHTML = `<span class="err">insufficient credits — need ${p.cost}, have ${p.have}. affordable: ${p.affordable_lines}</span>`;
     } else {
       status.innerHTML = `<span class="err">${e.message}</span>`;
     }
@@ -636,16 +834,17 @@ async function fetchLines() {
 }
 
 async function peek() {
+  const code = document.getElementById('fetchBatch').value;
+  if (!code) return;
   const amount = Math.max(1, parseInt(document.getElementById('amount').value) || 1);
-  const status = document.getElementById('fetchStatus');
   try {
-    const data = await api('/api/peek?amount=' + amount);
-    status.innerHTML = `<span class="ok">peek ${data.lines.length} (not removed, not charged)</span>`;
-    showOutput(data.lines, `peek ${data.lines.length}`);
-  } catch (e) { status.innerHTML = `<span class="err">${e.message}</span>`; }
+    const d = await api(`/api/peek?batch_code=${encodeURIComponent(code)}&amount=${amount}`);
+    const label = (findBatch(code) || {}).label || d.batch_label || code;
+    document.getElementById('fetchStatus').innerHTML = `<span class="ok">peek ${d.lines.length} from ${escapeHtml(label)} (no charge)</span>`;
+    showOutput(d.lines, `${label} · peek ${d.lines.length}`);
+  } catch (e) { document.getElementById('fetchStatus').innerHTML = `<span class="err">${e.message}</span>`; }
 }
 
-/* fetched history */
 async function loadFetched() {
   if (!getToken()) return;
   const status = document.getElementById('fetchedStatus');
@@ -653,17 +852,15 @@ async function loadFetched() {
   const label = document.getElementById('fetchedLabel');
   status.textContent = 'loading…';
   try {
-    const data = await api('/api/fetched?limit=200');
-    label.textContent = `fetched lines on server · total ${data.total}`;
-    if (!data.lines.length) { body.textContent = '(empty)'; status.innerHTML = '<span class="ok">0</span>'; return; }
-    body.textContent = data.lines.map(
-      (l, i) => `[${i + 1}] ${(l.fetched_at || '').slice(0, 19).replace('T',' ')}\n${l.text}`
-    ).join('\n\n');
-    status.innerHTML = `<span class="ok">showing ${data.lines.length} of ${data.total}</span>`;
-  } catch (e) {
-    status.innerHTML = `<span class="err">${e.message}</span>`;
-    body.textContent = '(could not load)';
-  }
+    const d = await api('/api/fetched?limit=200');
+    label.textContent = `fetched lines on server · total ${d.total}`;
+    if (!d.lines.length) { body.textContent = '(empty)'; status.innerHTML = '<span class="ok">0</span>'; return; }
+    body.textContent = d.lines.map((l, i) => {
+      const b = findBatch(l.batch_code) || {label: l.batch_code || '—'};
+      return `[${i+1}] ${(l.fetched_at||'').slice(0,19).replace('T',' ')} · ${b.label}\n${l.text}`;
+    }).join('\n\n');
+    status.innerHTML = `<span class="ok">showing ${d.lines.length} of ${d.total}</span>`;
+  } catch (e) { status.innerHTML = `<span class="err">${e.message}</span>`; }
 }
 
 async function exportFetched() {
@@ -672,7 +869,7 @@ async function exportFetched() {
     const r = await fetch(BASE + '/api/fetched/export', {
       headers: {'Authorization': 'Bearer ' + getToken()}
     });
-    if (!r.ok) throw new Error('export failed: ' + r.status);
+    if (!r.ok) throw new Error('export failed');
     const blob = await r.blob();
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -680,154 +877,36 @@ async function exportFetched() {
     document.body.appendChild(a); a.click(); a.remove();
     URL.revokeObjectURL(url);
     toast('export downloaded');
-  } catch (e) { toast('export failed'); }
+  } catch { toast('export failed'); }
 }
 
 async function clearFetched() {
-  if (!getToken()) return;
-  if (!confirm('Delete ALL fetched lines archived on server for this account?')) return;
+  if (!confirm('Delete ALL fetched lines for this account?')) return;
   try {
-    const data = await api('/api/fetched/clear', {method: 'POST'});
-    document.getElementById('fetchedStatus').innerHTML = `<span class="warn">deleted ${data.deleted}</span>`;
+    const d = await api('/api/fetched/clear', {method: 'POST'});
+    document.getElementById('fetchedStatus').innerHTML = `<span class="warn">deleted ${d.deleted}</span>`;
     document.getElementById('fetchedBody').textContent = '(empty)';
-    toast(`deleted ${data.deleted}`);
     refreshStats();
-  } catch (e) {
-    document.getElementById('fetchedStatus').innerHTML = `<span class="err">${e.message}</span>`;
-  }
-}
-
-/* credits */
-function creditTab(name, btn) {
-  document.querySelectorAll('#creditsCard .tab').forEach(t => t.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('creditRedeemPane').style.display = name === 'redeem' ? 'block' : 'none';
-  document.getElementById('creditHistoryPane').style.display = name === 'history' ? 'block' : 'none';
-  if (name === 'history') loadCreditHistory();
-}
-
-async function redeemVoucher() {
-  const status = document.getElementById('voucherStatus');
-  const code = document.getElementById('voucherCode').value.trim().toUpperCase();
-  if (!code) { status.innerHTML = '<span class="err">enter a code</span>'; return; }
-  status.textContent = 'redeeming…';
-  try {
-    const data = await api('/api/credits/redeem', {
-      method: 'POST', headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({code})
-    });
-    status.innerHTML = `<span class="ok">+${data.granted} credits · new balance ${data.credits === 'inf' ? '∞' : data.credits}</span>`;
-    document.getElementById('voucherCode').value = '';
-    toast('voucher redeemed');
-    refreshStats();
-    loadCreditHistory();
-  } catch (e) { status.innerHTML = `<span class="err">${e.message}</span>`; }
-}
-
-async function loadCreditHistory() {
-  if (!getToken()) return;
-  try {
-    const data = await api('/api/credits/history?limit=50');
-    const body = document.getElementById('creditHistoryBody');
-    if (!data.history.length) { body.textContent = '(no entries)'; return; }
-    body.textContent = data.history.map(h => {
-      const t = (h.created_at || '').slice(0, 19).replace('T',' ');
-      const bal = h.balance_after === 'inf' ? '∞' : h.balance_after;
-      return `${t}  ${h.delta.padEnd(8)}  ${h.reason.padEnd(20)}  → ${bal}`;
-    }).join('\n');
-  } catch {}
-}
-
-/* leaderboard */
-async function loadLeaderboard() {
-  try {
-    const data = await api('/api/leaderboard');
-    const box = document.getElementById('leaderboardBody');
-    if (!data.leaders.length) { return; }
-    box.innerHTML = '<div class="lb-row" style="color:var(--muted);font-size:0.75rem;"><span class="lb-rank">#</span><span class="lb-name">user</span><span class="lb-fetched">fetched</span></div>' +
-      data.leaders.map((u, i) =>
-        `<div class="lb-row"><span class="lb-rank">${i+1}</span><span class="lb-name">${escapeHtml(u.username)}</span><span class="lb-fetched">${u.total_fetched}</span></div>`
-      ).join('');
-  } catch {}
-}
-
-/* owner panel */
-function ownerTab(name, btn) {
-  document.querySelectorAll('#ownerCard .tab').forEach(t => t.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('ownerStatsPane').style.display = name === 'stats' ? 'block' : 'none';
-  document.getElementById('ownerGrantPane').style.display = name === 'grant' ? 'block' : 'none';
-  document.getElementById('ownerVoucherPane').style.display = name === 'voucher' ? 'block' : 'none';
-  document.getElementById('ownerPoolPane').style.display = name === 'pool' ? 'block' : 'none';
-  if (name === 'stats') loadOwnerStats();
+  } catch (e) { document.getElementById('fetchedStatus').innerHTML = `<span class="err">${e.message}</span>`; }
 }
 
 async function loadOwnerStats() {
   if (getRole() !== 'owner') return;
   const body = document.getElementById('ownerStatsBody');
   try {
-    const data = await api('/api/admin/stats');
+    const d = await api('/api/admin/stats');
     body.textContent =
-      `total users      ${data.total_users}\n` +
-      `new today        ${data.new_today}\n` +
-      `lines in pool    ${data.total_lines}\n` +
-      `total fetched    ${data.total_fetched}\n` +
-      `credits/line     ${data.credits_per_line}\n\n` +
-      'recent users:\n' +
-      data.recent_users.map(u =>
-        `  ${u.username.padEnd(20)} role=${u.role.padEnd(6)} credits=${u.credits === 'inf' ? '∞' : u.credits}  fetched=${u.total_fetched || 0}`
-      ).join('\n');
+      `users      ${d.total_users}\n` +
+      `new today  ${d.new_today}\n` +
+      `batches    ${d.total_batches}\n` +
+      `lines      ${d.total_lines}\n` +
+      `fetched    ${d.total_fetched}\n` +
+      `credits/ln ${d.credits_per_line}\n\n` +
+      'batches:\n' +
+      d.batches.map(b => `  ${(b.label||b.batch_code).padEnd(20)} ${b.batch_code.padEnd(14)} ${String(b.count).padStart(6)}${b.archived ? ' (archived)' : ''}`).join('\n');
   } catch (e) { body.textContent = 'error: ' + e.message; }
 }
 
-async function grantCredits() {
-  const username = document.getElementById('grantUser').value.trim().toLowerCase();
-  const amount = parseFloat(document.getElementById('grantAmount').value);
-  const status = document.getElementById('grantStatus');
-  if (!username || !amount || amount <= 0) { status.innerHTML = '<span class="err">username and amount>0</span>'; return; }
-  status.textContent = 'granting…';
-  try {
-    const data = await api('/api/admin/grant', {
-      method: 'POST', headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({username, amount})
-    });
-    status.innerHTML = `<span class="ok">${username} now has ${data.credits === 'inf' ? '∞' : data.credits} credits</span>`;
-    document.getElementById('grantUser').value = '';
-    document.getElementById('grantAmount').value = '';
-    toast('granted');
-  } catch (e) { status.innerHTML = `<span class="err">${e.message}</span>`; }
-}
-
-async function createVoucher() {
-  const amount = parseFloat(document.getElementById('voucherAmount').value);
-  const count = parseInt(document.getElementById('voucherCount').value);
-  const status = document.getElementById('voucherCreateStatus');
-  if (!amount || amount <= 0 || !count || count < 1) { status.innerHTML = '<span class="err">amount>0, count 1..500</span>'; return; }
-  status.textContent = 'creating…';
-  try {
-    const data = await api('/api/admin/voucher', {
-      method: 'POST', headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({amount, count})
-    });
-    status.innerHTML = `<span class="ok">${data.codes.length} voucher(s) created, ${data.amount} each</span>`;
-    document.getElementById('voucherBox').style.display = 'block';
-    document.getElementById('voucherBody').textContent = data.codes.join('\n');
-    toast('vouchers ready');
-  } catch (e) { status.innerHTML = `<span class="err">${e.message}</span>`; }
-}
-
-async function clearPool() {
-  if (getRole() !== 'owner') return;
-  if (!confirm('Wipe the ENTIRE shared pool? All accounts lose their pending lines.')) return;
-  try {
-    const data = await api('/api/admin/pool/clear', {method: 'POST'});
-    document.getElementById('poolStatus').innerHTML = `<span class="warn">deleted ${data.deleted} lines</span>`;
-    toast('pool wiped');
-    refreshStats();
-  } catch (e) { document.getElementById('poolStatus').innerHTML = `<span class="err">${e.message}</span>`; }
-}
-
-/* boot */
 async function validateSavedToken() {
   const t = getToken();
   if (!t) { renderAuth(); return; }
@@ -839,6 +918,7 @@ async function validateSavedToken() {
 }
 
 (async () => {
+  activeBatch = localStorage.getItem(BATCH_KEY) || '';
   await validateSavedToken();
   healthCheck();
   refreshStats();
